@@ -13,7 +13,7 @@ const Home: NextPage = () => {
       title={"Tesla Shop | Home"}
     >
       <Text variant="h1">Tienda</Text>
-      <Text sx={{mb: 1}} variant="h2">
+      <Text mb={2} variant="h2">
         Todos los productos
       </Text>
 

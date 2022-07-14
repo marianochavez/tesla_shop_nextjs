@@ -1,5 +1,6 @@
 import {FC, useMemo, useState} from "react";
-import {Grid} from "@chakra-ui/react";
+import {Box, Grid, Image, Link, Text} from "@chakra-ui/react";
+import NextLink from "next/link";
 
 import {IProduct} from "../../interfaces";
 
@@ -14,7 +15,20 @@ export const ProductCard: FC<Props> = ({product}) => {
     return isHovered ? `products/${product.images[1]}` : `products/${product.images[0]}`;
   }, [isHovered, product.images]);
 
-  return <Grid onMouseEnter={() => setIsHovered(true)} onMouseLeave={() => setIsHovered(false)}>
-    <Card></Card>
-  </Grid>;
+  return (
+    <Grid onMouseEnter={() => setIsHovered(true)} onMouseLeave={() => setIsHovered(false)}>
+      <Box>
+        <NextLink passHref href="/product/slug" prefetch={false}>
+          <Link>
+            <Image alt={product.title} borderRadius="10px" className="fadeIn" src={productImage} />
+          </Link>
+        </NextLink>
+      </Box>
+
+      <Box className="fadeIn" mt={1}>
+        <Text fontWeight={700}>{product.title}</Text>
+        <Text fontWeight={500}>{`$${product.price}`}</Text>
+      </Box>
+    </Grid>
+  );
 };

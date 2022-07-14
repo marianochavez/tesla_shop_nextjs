@@ -4,6 +4,7 @@ import {
   Box,
   Button,
   Container,
+  Hide,
   Icon,
   Link,
   Stack,
@@ -16,7 +17,7 @@ import {BsCart2} from "react-icons/bs";
 
 export const Navbar = () => {
   return (
-    <Container maxWidth="container" px={6} py={2}>
+    <Container maxWidth="container" pt={2} px={6}>
       <Stack alignItems="center" direction="row">
         <Box>
           <NextLink passHref href="/">
@@ -32,27 +33,29 @@ export const Navbar = () => {
           </NextLink>
         </Box>
         <Box flex={1} />
-        <Box>
-          <Stack direction="row" alignItems="center">
-            <NextLink passHref href="/category/men">
-              <Link>
-                <Button variant="ghost">Hombres</Button>
-              </Link>
-            </NextLink>
-            <Text fontWeight="normal">|</Text>
-            <NextLink passHref href="/category/women">
-              <Link>
-                <Button variant="ghost">Mujeres</Button>
-              </Link>
-            </NextLink>
-            <Text fontWeight="normal">|</Text>
-            <NextLink passHref href="/category/kid">
-              <Link>
-                <Button variant="ghost">Niños</Button>
-              </Link>
-            </NextLink>
-          </Stack>
-        </Box>
+        <Hide below="md">
+          <Box>
+            <Stack alignItems="center" direction="row">
+              <NextLink passHref href="/category/men">
+                <Link>
+                  <Button variant="ghost">Hombres</Button>
+                </Link>
+              </NextLink>
+              <Text fontWeight="normal">|</Text>
+              <NextLink passHref href="/category/women">
+                <Link>
+                  <Button variant="ghost">Mujeres</Button>
+                </Link>
+              </NextLink>
+              <Text fontWeight="normal">|</Text>
+              <NextLink passHref href="/category/kid">
+                <Link>
+                  <Button variant="ghost">Niños</Button>
+                </Link>
+              </NextLink>
+            </Stack>
+          </Box>
+        </Hide>
         <Box flex={1} />
         <Box>
           <Stack alignItems="center" direction="row" fontSize="lg">

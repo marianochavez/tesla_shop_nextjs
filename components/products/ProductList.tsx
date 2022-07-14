@@ -11,7 +11,10 @@ interface Props {
 
 export const ProductList: FC<Props> = ({products}) => {
   return (
-    <Grid gap={4}>
+    <Grid
+      gap={6}
+      templateColumns={{sm: "repeat(2, 1fr)", md: "repeat(2, 1fr)", lg: "repeat(3, 1fr)"}}
+    >
       {products.map((product) => (
         <ProductCard key={product.slug} product={product} />
       ))}

@@ -34,21 +34,17 @@ export const lightTheme = extendTheme({
         },
       },
     },
-    Button: {
-      defaultProps: {
-        variant: "solid",
-        size: "sm",
-      },
-      baseStyle: {
-        textTransform: "none",
-        boxShadow: "none",
-        borderRadius: 10,
-        "&:hover": {
-          backgroundColor: "rgba(0,0,0,0.05)",
-          transition: "all 0.3s ease-in-out",
-        },
-      },
-    },
+    // Button: {
+    //   baseStyle: {
+    //     textTransform: "none",
+    //     boxShadow: "none",
+    //     borderRadius: 10,
+    //     "&:hover": {
+    //       backgroundColor: "rgba(0,0,0,0.05)",
+    //       transition: "all 0.3s ease-in-out",
+    //     },
+    //   },
+    // },
     Card: {
       baseStyle: {
         boxShadow: "0px 5px 5px rgba(0,0,0,0.05)",
