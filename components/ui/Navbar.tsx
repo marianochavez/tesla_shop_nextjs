@@ -6,6 +6,9 @@ import {
   Container,
   Hide,
   Icon,
+  Input,
+  InputGroup,
+  InputRightElement,
   Link,
   Stack,
   Text,
@@ -14,8 +17,24 @@ import NextLink from "next/link";
 import {SiTesla} from "react-icons/si";
 import {AiOutlineSearch} from "react-icons/ai";
 import {BsCart2} from "react-icons/bs";
+import {useRouter} from "next/router";
+import {useContext, useState} from "react";
+import {MdOutlineClear} from "react-icons/md";
+
+import {UiContext} from "../../context";
 
 export const Navbar = () => {
+  const {pathname, push} = useRouter();
+  const {toggleSideMenu} = useContext(UiContext);
+
+  const [searchTerm, setSearchTerm] = useState("");
+  const [isSearchVisible, setIsSearchVisible] = useState(false);
+
+  const onSearchTerm = () => {
+    if (searchTerm.trim().length === 0) return;
+    push(`/search/${searchTerm}`);
+  };
+
   return (
     <Container maxWidth="container" pt={2} px={6}>
       <Stack alignItems="center" direction="row">
@@ -34,32 +53,82 @@ export const Navbar = () => {
         </Box>
         <Box flex={1} />
         <Hide below="md">
-          <Box>
-            <Stack alignItems="center" direction="row">
-              <NextLink passHref href="/category/men">
-                <Link>
-                  <Button variant="ghost">Hombres</Button>
-                </Link>
-              </NextLink>
-              <Text fontWeight="normal">|</Text>
-              <NextLink passHref href="/category/women">
-                <Link>
-                  <Button variant="ghost">Mujeres</Button>
-                </Link>
-              </NextLink>
-              <Text fontWeight="normal">|</Text>
-              <NextLink passHref href="/category/kid">
-                <Link>
-                  <Button variant="ghost">Niños</Button>
-                </Link>
-              </NextLink>
-            </Stack>
-          </Box>
+          <Stack
+            alignItems="center"
+            className="fadeIn"
+            direction="row"
+            display={isSearchVisible ? "none" : "flex"}
+          >
+            <NextLink passHref href="/category/men">
+              <Link>
+                <Button
+                  color={pathname === "/category/men" ? "red.700" : "secondary"}
+                  variant="ghost"
+                >
+                  Hombres
+                </Button>
+              </Link>
+            </NextLink>
+            <Text fontWeight="normal">|</Text>
+            <NextLink passHref href="/category/women">
+              <Link>
+                <Button
+                  color={pathname === "/category/women" ? "red.700" : "secondary"}
+                  variant="ghost"
+                >
+                  Mujeres
+                </Button>
+              </Link>
+            </NextLink>
+            <Text fontWeight="normal">|</Text>
+            <NextLink passHref href="/category/kid">
+              <Link>
+                <Button
+                  color={pathname === "/category/kid" ? "red.700" : "secondary"}
+                  variant="ghost"
+                >
+                  Niños
+                </Button>
+              </Link>
+            </NextLink>
+          </Stack>
         </Hide>
         <Box flex={1} />
         <Box>
           <Stack alignItems="center" direction="row" fontSize="lg">
-            <Icon as={AiOutlineSearch} />
+            {/* -- desktop -- */}
+            <Hide below="md">
+              {isSearchVisible ? (
+                <InputGroup className="fadeIn" size="sm">
+                  <Input
+                    autoFocus
+                    placeholder="Buscar..."
+                    type="text"
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        onSearchTerm();
+                      }
+                    }}
+                  />
+                  <InputRightElement>
+                    <Button variant="link" onClick={() => setIsSearchVisible(false)}>
+                      <Icon as={MdOutlineClear} />
+                    </Button>
+                  </InputRightElement>
+                </InputGroup>
+              ) : (
+                <Button className="fadeIn" variant="ghost" onClick={() => setIsSearchVisible(true)}>
+                  <Icon as={AiOutlineSearch} />
+                </Button>
+              )}
+            </Hide>
+            {/* -- mobile -- */}
+            <Button display={{base: "flex", md: "none"}} variant="ghost" onClick={toggleSideMenu}>
+              <Icon as={AiOutlineSearch} />
+            </Button>
+            {/* --- */}
             <NextLink passHref href="/cart">
               <Link>
                 <Avatar bg="transparent" icon={<BsCart2 />}>
@@ -75,7 +144,9 @@ export const Navbar = () => {
                 </Avatar>
               </Link>
             </NextLink>
-            <Button variant="ghost">Menu</Button>
+            <Button variant="ghost" onClick={toggleSideMenu}>
+              Menu
+            </Button>
           </Stack>
         </Box>
       </Stack>

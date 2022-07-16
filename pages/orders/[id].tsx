@@ -1,5 +1,5 @@
 import {Container, Link, Stack, Tag, TagLabel, TagLeftIcon, Text} from "@chakra-ui/react";
-import {MdCreditScore, MdOutlineCreditCardOff} from "react-icons/md";
+import {MdCreditScore} from "react-icons/md";
 import NextLink from "next/link";
 import {Divider, Box} from "@chakra-ui/react";
 

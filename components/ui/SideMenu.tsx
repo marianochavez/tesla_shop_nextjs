@@ -1,134 +1,196 @@
+import {useContext, useState} from "react";
 import {
   Drawer,
   DrawerBody,
-  DrawerFooter,
   DrawerHeader,
   DrawerOverlay,
   DrawerContent,
   DrawerCloseButton,
   Button,
   Input,
-  useDisclosure,
   Icon,
   InputGroup,
   InputRightElement,
   Stack,
   Divider,
   Text,
+  Show,
 } from "@chakra-ui/react";
-import {AiOutlineLogout, AiOutlineSearch, AiOutlineUser} from "react-icons/ai";
+import {
+  AiOutlineLogout,
+  AiOutlineMan,
+  AiOutlineSearch,
+  AiOutlineUser,
+  AiOutlineWoman,
+} from "react-icons/ai";
 import {BsBagCheck, BsKey} from "react-icons/bs";
 import {SiTesla} from "react-icons/si";
 import {RiProductHuntLine} from "react-icons/ri";
-import {FaUserCog} from "react-icons/fa";
+import {FaChild, FaUserCog} from "react-icons/fa";
+import {useRouter} from "next/router";
+
+import {UiContext} from "../../context";
 
 export const SideMenu = () => {
-  const {isOpen, onOpen, onClose} = useDisclosure();
+  const router = useRouter();
+  const {isMenuOpen, toggleSideMenu} = useContext(UiContext);
+
+  const [searchTerm, setSearchTerm] = useState("");
+
+  const onSearchTerm = () => {
+    if (searchTerm.trim().length === 0) return;
+
+    navigateTo(`/search/${searchTerm}`);
+  };
+
+  const navigateTo = (url: string) => {
+    toggleSideMenu();
+    router.push(url);
+  };
 
   return (
-    <>
-      {/* <Button colorScheme="teal" onClick={onOpen}>
-        Open
-      </Button> */}
-      {/* !! isOpen */}
-      <Drawer isOpen={false} placement="right" size="xs" onClose={onClose}>
-        <DrawerOverlay />
-        <DrawerContent>
-          <DrawerCloseButton />
-          <DrawerHeader>
-            <Icon as={SiTesla} color="red.700" fontSize="2xl" />
-          </DrawerHeader>
+    <Drawer isOpen={isMenuOpen} placement="right" size="xs" onClose={toggleSideMenu}>
+      <DrawerOverlay />
+      <DrawerContent>
+        <DrawerCloseButton />
+        <DrawerHeader>
+          <Icon as={SiTesla} color="red.700" fontSize="2xl" />
+        </DrawerHeader>
 
-          <DrawerBody>
-            <InputGroup>
-              <InputRightElement pointerEvents="none">
+        <DrawerBody>
+          <InputGroup>
+            <Input
+              autoFocus
+              placeholder="Buscar..."
+              type="text"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  onSearchTerm();
+                }
+              }}
+            />
+            <InputRightElement>
+              <Button variant="ghost" onClick={onSearchTerm}>
                 <Icon as={AiOutlineSearch} />
-              </InputRightElement>
-              <Input placeholder="Buscar..." type="text" />
-            </InputGroup>
+              </Button>
+            </InputRightElement>
+          </InputGroup>
 
-            <Stack direction="column" maxW="container" py={3}>
+          <Stack direction="column" maxW="container" py={3}>
+            <Button
+              colorScheme="blackAlpha"
+              justifyContent="left"
+              leftIcon={<AiOutlineUser />}
+              size="md"
+              variant="ghost"
+            >
+              Perfil
+            </Button>
+            <Button
+              colorScheme="blackAlpha"
+              justifyContent="left"
+              leftIcon={<BsBagCheck />}
+              size="md"
+              variant="ghost"
+            >
+              Mis ordenes
+            </Button>
+            <Show below="sm">
               <Button
                 colorScheme="blackAlpha"
                 justifyContent="left"
-                leftIcon={<AiOutlineUser />}
-                size="lg"
+                leftIcon={<AiOutlineMan />}
+                size="md"
                 variant="ghost"
+                onClick={() => navigateTo("/category/men")}
               >
-                Perfil
+                Hombres
               </Button>
               <Button
                 colorScheme="blackAlpha"
                 justifyContent="left"
-                leftIcon={<BsBagCheck />}
-                size="lg"
+                leftIcon={<AiOutlineWoman />}
+                size="md"
                 variant="ghost"
+                onClick={() => navigateTo("/category/women")}
               >
-                Mis ordenes
+                Mujeres
               </Button>
               <Button
                 colorScheme="blackAlpha"
                 justifyContent="left"
-                leftIcon={<BsKey />}
-                size="lg"
+                leftIcon={<FaChild />}
+                size="md"
                 variant="ghost"
+                onClick={() => navigateTo("/category/kid")}
               >
-                Ingresar
+                Niños
               </Button>
-              <Button
-                colorScheme="blackAlpha"
-                justifyContent="left"
-                leftIcon={<AiOutlineLogout />}
-                size="lg"
-                variant="ghost"
-              >
-                Salir
-              </Button>
-            </Stack>
+            </Show>
+            <Button
+              colorScheme="blackAlpha"
+              justifyContent="left"
+              leftIcon={<BsKey />}
+              size="md"
+              variant="ghost"
+            >
+              Ingresar
+            </Button>
+            <Button
+              colorScheme="blackAlpha"
+              justifyContent="left"
+              leftIcon={<AiOutlineLogout />}
+              size="md"
+              variant="ghost"
+            >
+              Salir
+            </Button>
+          </Stack>
 
-            <Divider />
+          <Divider />
 
-            <Stack direction="column" maxW="container" py={3}>
-              <Text color="gray" fontWeight="bold">
-                Admin Panel
-              </Text>
-              <Button
-                colorScheme="blackAlpha"
-                justifyContent="left"
-                leftIcon={<RiProductHuntLine />}
-                size="lg"
-                variant="ghost"
-              >
-                Productos
-              </Button>
-              <Button
-                colorScheme="blackAlpha"
-                justifyContent="left"
-                leftIcon={<BsBagCheck />}
-                size="lg"
-                variant="ghost"
-              >
-                Ordenes
-              </Button>
-              <Button
-                colorScheme="blackAlpha"
-                justifyContent="left"
-                leftIcon={<FaUserCog />}
-                size="lg"
-                variant="ghost"
-              >
-                Usuarios
-              </Button>
-            </Stack>
-          </DrawerBody>
+          <Stack direction="column" maxW="container" py={3}>
+            <Text color="gray" fontWeight="bold">
+              Admin Panel
+            </Text>
+            <Button
+              colorScheme="blackAlpha"
+              justifyContent="left"
+              leftIcon={<RiProductHuntLine />}
+              size="md"
+              variant="ghost"
+            >
+              Productos
+            </Button>
+            <Button
+              colorScheme="blackAlpha"
+              justifyContent="left"
+              leftIcon={<BsBagCheck />}
+              size="md"
+              variant="ghost"
+            >
+              Ordenes
+            </Button>
+            <Button
+              colorScheme="blackAlpha"
+              justifyContent="left"
+              leftIcon={<FaUserCog />}
+              size="md"
+              variant="ghost"
+            >
+              Usuarios
+            </Button>
+          </Stack>
+        </DrawerBody>
 
-          {/* <DrawerFooter>
+        {/* <DrawerFooter>
             <Button colorScheme="red" mr={3} variant="ghost" onClick={onClose}>
               Cerrar
             </Button>
           </DrawerFooter> */}
-        </DrawerContent>
-      </Drawer>
-    </>
+      </DrawerContent>
+    </Drawer>
   );
 };
