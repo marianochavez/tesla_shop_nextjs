@@ -21,11 +21,12 @@ import {useRouter} from "next/router";
 import {useContext, useState} from "react";
 import {MdOutlineClear} from "react-icons/md";
 
-import {UiContext} from "../../context";
+import {CartContext, UiContext} from "../../context";
 
 export const Navbar = () => {
   const {pathname, push} = useRouter();
   const {toggleSideMenu} = useContext(UiContext);
+  const {numberOfItems} = useContext(CartContext);
 
   const [searchTerm, setSearchTerm] = useState("");
   const [isSearchVisible, setIsSearchVisible] = useState(false);
@@ -134,12 +135,14 @@ export const Navbar = () => {
                 <Avatar bg="transparent" icon={<BsCart2 />}>
                   <AvatarBadge
                     bg="secondary.default"
-                    boxSize="1.60em"
+                    boxSize="1.70em"
                     color="white"
+                    display={numberOfItems > 0 ? "flex" : "none"}
                     fontSize="sm"
+                    fontWeight="semibold"
                     top={0}
                   >
-                    2
+                    {numberOfItems > 9 ? "+9" : numberOfItems}
                   </AvatarBadge>
                 </Avatar>
               </Link>

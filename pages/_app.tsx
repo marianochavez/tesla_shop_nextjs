@@ -6,7 +6,7 @@ import {ChakraProvider} from "@chakra-ui/react";
 import {SWRConfig} from "swr";
 
 import {lightTheme} from "../themes";
-import {UiProvider} from "../context";
+import {UiProvider, CartProvider} from "../context";
 
 function MyApp({Component, pageProps}: AppProps) {
   return (
@@ -16,9 +16,11 @@ function MyApp({Component, pageProps}: AppProps) {
       }}
     >
       <UiProvider>
-        <ChakraProvider theme={lightTheme}>
-          <Component {...pageProps} />
-        </ChakraProvider>
+        <CartProvider>
+          <ChakraProvider theme={lightTheme}>
+            <Component {...pageProps} />
+          </ChakraProvider>
+        </CartProvider>
       </UiProvider>
     </SWRConfig>
   );

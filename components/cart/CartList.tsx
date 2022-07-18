@@ -1,31 +1,36 @@
-import {FC} from "react";
+import {FC, useContext} from "react";
 import NextLink from "next/link";
 import {Box, Button, Image, Link, Stack, Text} from "@chakra-ui/react";
 
-import {initialData} from "../../database/products";
 import {ItemCounter} from "../ui";
-
-const productsInCart = [initialData.products[0], initialData.products[1], initialData.products[2]];
+import {CartContext} from "../../context";
+import {ICartProduct} from "../../interfaces";
 
 interface Props {
   editable?: boolean;
 }
 
 export const CartList: FC<Props> = ({editable = false}) => {
+  const {cart, updateCartQuantity, removeCartProduct} = useContext(CartContext);
+
+  const onNewCartQauntity = (product: ICartProduct, newQuantity: number) => {
+    product.quantity = newQuantity;
+    updateCartQuantity(product);
+  };
+
   return (
     <>
-      {productsInCart.map((product) => (
-        <Stack key={product.slug} direction="row" mb={2} spacing={2}>
+      {cart.map((product) => (
+        <Stack key={product.slug + product.size} direction="row" mb={2} spacing={2}>
           <Box>
-            {/* TODO: llevar a la pagina del producto */}
-            <NextLink passHref href="/product/slug">
+            <NextLink passHref href={`/product/${product.slug}`}>
               <Link>
                 <Box>
                   <Image
                     alt={product.title}
                     borderRadius="5px"
                     h={170}
-                    src={`/products/${product.images[0]}`}
+                    src={`/products/${product.image}`}
                     w={170}
                   />
                 </Box>
@@ -36,15 +41,30 @@ export const CartList: FC<Props> = ({editable = false}) => {
             <Stack direction="column">
               <Text>{product.title}</Text>
               <Text>
-                Talla: <strong>M</strong>
+                Talla: <strong>{product.size}</strong>
               </Text>
-              {editable ? <ItemCounter /> : <Text variant="h5">3 items</Text>}
+              {editable ? (
+                <ItemCounter
+                  currentValue={product.quantity}
+                  maxValue={10}
+                  updatedQuantity={(value) => onNewCartQauntity(product, value)}
+                />
+              ) : (
+                <Text variant="h5">
+                  {product.quantity} {product.quantity > 1 ? "productos" : "producto"}
+                </Text>
+              )}
             </Stack>
             <Stack alignItems="center">
               <Text variant="subtitle1">{`$${product.price}`}</Text>
 
               {editable && (
-                <Button colorScheme="red" size="sm" variant="ghost">
+                <Button
+                  colorScheme="red"
+                  size="sm"
+                  variant="ghost"
+                  onClick={() => removeCartProduct(product)}
+                >
                   Remover
                 </Button>
               )}

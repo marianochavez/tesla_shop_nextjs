@@ -1,17 +1,35 @@
-import {Icon, Text, Stack} from "@chakra-ui/react";
+import {Text, Stack, Button} from "@chakra-ui/react";
 import {FC} from "react";
 import {AiOutlineMinusCircle, AiOutlinePlusCircle} from "react-icons/ai";
 
-interface Props {}
+interface Props {
+  currentValue: number;
+  maxValue: number;
 
-export const ItemCounter: FC<Props> = () => {
+  updatedQuantity: (quantity: number) => void;
+}
+
+export const ItemCounter: FC<Props> = ({currentValue, updatedQuantity, maxValue}) => {
+  const handleIncrementCounter = () => {
+    if (currentValue === maxValue) return;
+    updatedQuantity(currentValue + 1);
+  };
+  const handleDecrementCounter = () => {
+    if (currentValue <= 1) return;
+    updatedQuantity(currentValue - 1);
+  };
+
   return (
-    <Stack alignItems="center" direction="row" fontSize="xl" gap={2} ml={2}>
-      <Icon as={AiOutlineMinusCircle} />
-      <Text textAlign="center" w={4}>
-        1
+    <Stack alignItems="center" direction="row" ml={2}>
+      <Button p={0} size="sm" variant="ghost" onClick={handleDecrementCounter}>
+        <AiOutlineMinusCircle fontSize="20px" />
+      </Button>
+      <Text p={0} px={2} textAlign="center">
+        {currentValue}
       </Text>
-      <Icon as={AiOutlinePlusCircle} />
+      <Button p={0} size="sm" variant="ghost" onClick={handleIncrementCounter}>
+        <AiOutlinePlusCircle fontSize="20px" />
+      </Button>
     </Stack>
   );
 };
