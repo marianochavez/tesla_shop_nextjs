@@ -6,7 +6,7 @@ import {ChakraProvider} from "@chakra-ui/react";
 import {SWRConfig} from "swr";
 
 import {lightTheme} from "../themes";
-import {UiProvider, CartProvider} from "../context";
+import {UiProvider, CartProvider, AuthProvider} from "../context";
 
 function MyApp({Component, pageProps}: AppProps) {
   return (
@@ -15,13 +15,15 @@ function MyApp({Component, pageProps}: AppProps) {
         fetcher: (resource, init) => fetch(resource, init).then((res) => res.json()),
       }}
     >
-      <UiProvider>
+      <AuthProvider>
         <CartProvider>
-          <ChakraProvider theme={lightTheme}>
-            <Component {...pageProps} />
-          </ChakraProvider>
+          <UiProvider>
+            <ChakraProvider theme={lightTheme}>
+              <Component {...pageProps} />
+            </ChakraProvider>
+          </UiProvider>
         </CartProvider>
-      </UiProvider>
+      </AuthProvider>
     </SWRConfig>
   );
 }

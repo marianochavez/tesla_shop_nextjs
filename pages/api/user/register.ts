@@ -4,7 +4,7 @@ import bcrypt from "bcryptjs";
 
 import {db} from "../../../database";
 import {User} from "../../../models";
-import {jwt} from "../../../utils";
+import {jwt, validations} from "../../../utils";
 
 type Data = {message: string} | {token: string; user: {email: string; role: string; name: string}};
 
@@ -33,8 +33,9 @@ const registerUser = async (req: NextApiRequest, res: NextApiResponse<Data>) => 
     return res.status(400).json({message: "El nombre debe tener al menos 2 caracteres"});
   }
 
-  // todo validar email
-  // if (email)
+  if (!validations.isValidEmail(email)) {
+    return res.status(400).json({message: "El email no es válido"});
+  }
 
   await db.connect();
   const user = await User.findOne({email});
