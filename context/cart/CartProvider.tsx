@@ -1,7 +1,7 @@
 import {useReducer, useEffect} from "react";
-import Cookie from "js-cookie";
+import Cookies from "js-cookie";
 
-import {ICartProduct} from "../../interfaces";
+import {ICartProduct, IShippingAddress} from "../../interfaces";
 
 import {CartContext, cartReducer} from "./";
 
@@ -10,19 +10,23 @@ interface Props {
 }
 
 export interface CartState {
+  isLoaded: boolean;
   cart: ICartProduct[];
   numberOfItems: number;
   subTotal: number;
   tax: number;
   total: number;
+  shippingAddress?: IShippingAddress;
 }
 
 const CART_INITIAL_STATE: CartState = {
+  isLoaded: false,
   cart: [],
   numberOfItems: 0,
   subTotal: 0,
   tax: 0,
   total: 0,
+  shippingAddress: undefined,
 };
 
 export const CartProvider: React.FunctionComponent<Props> = ({children}) => {
@@ -30,7 +34,7 @@ export const CartProvider: React.FunctionComponent<Props> = ({children}) => {
 
   useEffect(() => {
     try {
-      const cookieProducts = Cookie.get("cart") ? JSON.parse(Cookie.get("cart")!) : [];
+      const cookieProducts = Cookies.get("cart") ? JSON.parse(Cookies.get("cart")!) : [];
 
       dispatch({type: "Cart - LoadCart from cookies | storage", payload: cookieProducts});
     } catch (error) {
@@ -39,9 +43,26 @@ export const CartProvider: React.FunctionComponent<Props> = ({children}) => {
   }, []);
 
   useEffect(() => {
+    if (Cookies.get("name")) {
+      const cookieAddress = {
+        name: Cookies.get("name") || "",
+        lastName: Cookies.get("lastName") || "",
+        address: Cookies.get("address") || "",
+        address2: Cookies.get("address2") || "",
+        zipCode: Cookies.get("zipCode") || "",
+        city: Cookies.get("city") || "",
+        country: Cookies.get("country") || "",
+        phone: Cookies.get("phone") || "",
+      };
+
+      dispatch({type: "Cart - LoadAddress from cookies", payload: cookieAddress});
+    }
+  }, []);
+
+  useEffect(() => {
     // * el if impide que se borre la cookie al recargar la pagina
     // ? posiblemente sea por el modo estricto en desarrollo ("se ejecuta 2 veces")
-    if (state.cart.length > 0) Cookie.set("cart", JSON.stringify(state.cart));
+    if (state.cart.length > 0) Cookies.set("cart", JSON.stringify(state.cart));
   }, [state.cart]);
 
   useEffect(() => {
@@ -88,6 +109,19 @@ export const CartProvider: React.FunctionComponent<Props> = ({children}) => {
     dispatch({type: "Cart - Remove product in cart", payload: product});
   };
 
+  const updateAddress = (address: IShippingAddress) => {
+    Cookies.set("name", address.name);
+    Cookies.set("lastName", address.lastName);
+    Cookies.set("address", address.address);
+    Cookies.set("address2", address.address2 || "");
+    Cookies.set("zipCode", address.zipCode);
+    Cookies.set("city", address.city);
+    Cookies.set("country", address.country);
+    Cookies.set("phone", address.phone);
+
+    dispatch({type: "Cart - Update Address", payload: address});
+  };
+
   return (
     <CartContext.Provider
       value={{
@@ -97,6 +131,7 @@ export const CartProvider: React.FunctionComponent<Props> = ({children}) => {
         addProductToCart,
         updateCartQuantity,
         removeCartProduct,
+        updateAddress,
       }}
     >
       {children}

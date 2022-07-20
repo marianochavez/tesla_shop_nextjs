@@ -23,16 +23,17 @@ import {
   AiOutlineUser,
   AiOutlineWoman,
 } from "react-icons/ai";
+import {useRouter} from "next/router";
 import {BsBagCheck, BsKey} from "react-icons/bs";
 import {SiTesla} from "react-icons/si";
 import {RiProductHuntLine} from "react-icons/ri";
 import {FaChild, FaUserCog} from "react-icons/fa";
-import {useRouter} from "next/router";
 
-import {UiContext} from "../../context";
+import {AuthContext, UiContext} from "../../context";
 
 export const SideMenu = () => {
   const router = useRouter();
+  const {user, isLoggedIn, logoutUser} = useContext(AuthContext);
   const {isMenuOpen, toggleSideMenu} = useContext(UiContext);
 
   const [searchTerm, setSearchTerm] = useState("");
@@ -79,24 +80,29 @@ export const SideMenu = () => {
           </InputGroup>
 
           <Stack direction="column" maxW="container" py={3}>
-            <Button
-              colorScheme="blackAlpha"
-              justifyContent="left"
-              leftIcon={<AiOutlineUser />}
-              size="md"
-              variant="ghost"
-            >
-              Perfil
-            </Button>
-            <Button
-              colorScheme="blackAlpha"
-              justifyContent="left"
-              leftIcon={<BsBagCheck />}
-              size="md"
-              variant="ghost"
-            >
-              Mis ordenes
-            </Button>
+            {isLoggedIn && (
+              <>
+                <Button
+                  colorScheme="blackAlpha"
+                  justifyContent="left"
+                  leftIcon={<AiOutlineUser />}
+                  size="md"
+                  variant="ghost"
+                >
+                  Perfil
+                </Button>
+                <Button
+                  colorScheme="blackAlpha"
+                  justifyContent="left"
+                  leftIcon={<BsBagCheck />}
+                  size="md"
+                  variant="ghost"
+                >
+                  Mis ordenes
+                </Button>
+              </>
+            )}
+
             <Show below="sm">
               <Button
                 colorScheme="blackAlpha"
@@ -129,60 +135,68 @@ export const SideMenu = () => {
                 Niños
               </Button>
             </Show>
-            <Button
-              colorScheme="blackAlpha"
-              justifyContent="left"
-              leftIcon={<BsKey />}
-              size="md"
-              variant="ghost"
-            >
-              Ingresar
-            </Button>
-            <Button
-              colorScheme="blackAlpha"
-              justifyContent="left"
-              leftIcon={<AiOutlineLogout />}
-              size="md"
-              variant="ghost"
-            >
-              Salir
-            </Button>
+            {isLoggedIn ? (
+              <Button
+                colorScheme="blackAlpha"
+                justifyContent="left"
+                leftIcon={<AiOutlineLogout />}
+                size="md"
+                variant="ghost"
+                onClick={logoutUser}
+              >
+                Salir
+              </Button>
+            ) : (
+              <Button
+                colorScheme="blackAlpha"
+                justifyContent="left"
+                leftIcon={<BsKey />}
+                size="md"
+                variant="ghost"
+                onClick={() => navigateTo(`/auth/login?p=${router.pathname}`)}
+              >
+                Ingresar
+              </Button>
+            )}
           </Stack>
 
-          <Divider />
-
-          <Stack direction="column" maxW="container" py={3}>
-            <Text color="gray" fontWeight="bold">
-              Admin Panel
-            </Text>
-            <Button
-              colorScheme="blackAlpha"
-              justifyContent="left"
-              leftIcon={<RiProductHuntLine />}
-              size="md"
-              variant="ghost"
-            >
-              Productos
-            </Button>
-            <Button
-              colorScheme="blackAlpha"
-              justifyContent="left"
-              leftIcon={<BsBagCheck />}
-              size="md"
-              variant="ghost"
-            >
-              Ordenes
-            </Button>
-            <Button
-              colorScheme="blackAlpha"
-              justifyContent="left"
-              leftIcon={<FaUserCog />}
-              size="md"
-              variant="ghost"
-            >
-              Usuarios
-            </Button>
-          </Stack>
+          {user?.role === "admin" && (
+            <>
+              <Divider />
+              <Stack direction="column" maxW="container" py={3}>
+                <Text color="gray" fontWeight="bold">
+                  Admin Panel
+                </Text>
+                <Button
+                  colorScheme="blackAlpha"
+                  justifyContent="left"
+                  leftIcon={<RiProductHuntLine />}
+                  size="md"
+                  variant="ghost"
+                >
+                  Productos
+                </Button>
+                <Button
+                  colorScheme="blackAlpha"
+                  justifyContent="left"
+                  leftIcon={<BsBagCheck />}
+                  size="md"
+                  variant="ghost"
+                >
+                  Ordenes
+                </Button>
+                <Button
+                  colorScheme="blackAlpha"
+                  justifyContent="left"
+                  leftIcon={<FaUserCog />}
+                  size="md"
+                  variant="ghost"
+                >
+                  Usuarios
+                </Button>
+              </Stack>
+            </>
+          )}
         </DrawerBody>
 
         {/* <DrawerFooter>

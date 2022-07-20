@@ -1,9 +1,25 @@
-import {Box, Button, Container, Divider, Stack, Text} from "@chakra-ui/react";
+import {Box, Button, Container, Divider, Link, Stack, Text} from "@chakra-ui/react";
+import {useContext, useEffect} from "react";
+import {useRouter} from "next/router";
 
 import {CartList, OrderSummary} from "../../components/cart";
 import {ShopLayout} from "../../components/layouts";
+import {CartContext} from "../../context";
 
 const CartPage = () => {
+  const router = useRouter();
+  const {isLoaded, cart} = useContext(CartContext);
+
+  useEffect(() => {
+    if (isLoaded && cart.length === 0) {
+      router.replace("/cart/empty");
+    }
+  }, [isLoaded, cart, router]);
+
+  if (!isLoaded || cart.length === 0) {
+    return <></>;
+  }
+
   return (
     <ShopLayout pageDescription="Carrito de compras de la tienda" title="Carrito -3">
       <Text variant="h1">Carrito</Text>
@@ -24,7 +40,7 @@ const CartPage = () => {
             <OrderSummary />
 
             <Box>
-              <Button colorScheme="blue" size="sm" w="100%">
+              <Button as={Link} colorScheme="blue" href="/checkout/address" size="sm" w="100%">
                 Checkout
               </Button>
             </Box>

@@ -23,6 +23,7 @@ const AUTH_INITIAL_STATE: AuthState = {
 };
 
 export const AuthProvider: FC<Props> = ({children}) => {
+  const router = useRouter();
   const [state, dispatch] = useReducer(authReducer, AUTH_INITIAL_STATE);
 
   useEffect(() => {
@@ -30,6 +31,7 @@ export const AuthProvider: FC<Props> = ({children}) => {
   }, []);
 
   const checkToken = async () => {
+    if (!Cookies.get("token")) return;
     try {
       const {data} = await teslaApi.get("/user/validate-token");
       const {token, user} = data;
@@ -87,6 +89,13 @@ export const AuthProvider: FC<Props> = ({children}) => {
     }
   };
 
+  const logoutUser = async () => {
+    Cookies.remove("token");
+    Cookies.remove("cart");
+    dispatch({type: "Auth - Logout"});
+    router.reload();
+  };
+
   return (
     <AuthContext.Provider
       value={{
@@ -95,6 +104,7 @@ export const AuthProvider: FC<Props> = ({children}) => {
         // methods
         loginUser,
         registerUser,
+        logoutUser,
       }}
     >
       {children}

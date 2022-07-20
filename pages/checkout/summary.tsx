@@ -1,10 +1,21 @@
 import {Grid, Text, GridItem, Container, Stack, Divider, Box, Link, Button} from "@chakra-ui/react";
 import NextLink from "next/link";
+import {useContext} from "react";
 
 import {CartList, OrderSummary} from "../../components/cart";
 import {ShopLayout} from "../../components/layouts";
+import {CartContext} from "../../context";
+import {countries} from "../../utils";
 
 const SummaryPage = () => {
+  const {shippingAddress, numberOfItems} = useContext(CartContext);
+
+  if (!shippingAddress) {
+    return <></>;
+  }
+
+  const {name, lastName, address, address2 = "", city, country, phone, zipCode} = shippingAddress;
+
   return (
     <ShopLayout pageDescription="Resumen de la orden" title="Resumen de orden">
       <Text variant="h1">Resumen de la orden</Text>
@@ -21,7 +32,9 @@ const SummaryPage = () => {
               boxShadow="0px 5px 5px rgba(0, 0, 0, 0.2)"
               p={4}
             >
-              <Text variant="h2">Resumen (3 productos)</Text>
+              <Text variant="h2">
+                Resumen ({numberOfItems} {numberOfItems === 1 ? "producto" : "productos"})
+              </Text>
               <Divider my={1} />
 
               <Box display="flex" justifyContent="space-between">
@@ -31,11 +44,17 @@ const SummaryPage = () => {
                 </NextLink>
               </Box>
 
-              <Text>Fernando Herrera</Text>
-              <Text>323 Algun lugar</Text>
-              <Text>Stittsville, HYA 23S</Text>
-              <Text>Canadá</Text>
-              <Text>+1 23123123</Text>
+              <Text>
+                {name} {lastName}
+              </Text>
+              <Text>
+                {address} {address2 ? `, ${address2}` : ""}
+              </Text>
+              <Text>
+                {city}, {zipCode}
+              </Text>
+              <Text>{countries.find((c) => c.code === country)?.name}</Text>
+              <Text>{phone}</Text>
 
               <Divider my={1} />
 
