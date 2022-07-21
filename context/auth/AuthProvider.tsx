@@ -1,7 +1,8 @@
+import {FC, useReducer, useEffect} from "react";
 import axios from "axios";
 import Cookies from "js-cookie";
+import {useSession, signOut} from "next-auth/react";
 import {useRouter} from "next/router";
-import {FC, useReducer, useEffect} from "react";
 
 import {teslaApi} from "../../api";
 import {IUser} from "../../interfaces";
@@ -26,22 +27,26 @@ export const AuthProvider: FC<Props> = ({children}) => {
   const router = useRouter();
   const [state, dispatch] = useReducer(authReducer, AUTH_INITIAL_STATE);
 
+  const {data, status} = useSession();
+
   useEffect(() => {
-    checkToken();
-  }, []);
-
-  const checkToken = async () => {
-    if (!Cookies.get("token")) return;
-    try {
-      const {data} = await teslaApi.get("/user/validate-token");
-      const {token, user} = data;
-
-      Cookies.set("token", token);
-      dispatch({type: "Auth - Login", payload: user});
-    } catch (error) {
-      Cookies.set("token", "");
+    if (status === "authenticated") {
+      dispatch({type: "Auth - Login", payload: data?.user as IUser});
     }
-  };
+  }, [status, data]);
+
+  // const checkToken = async () => {
+  //   if (!Cookies.get("token")) return;
+  //   try {
+  //     const {data} = await teslaApi.get("/user/validate-token");
+  //     const {token, user} = data;
+
+  //     Cookies.set("token", token);
+  //     dispatch({type: "Auth - Login", payload: user});
+  //   } catch (error) {
+  //     Cookies.set("token", "");
+  //   }
+  // };
 
   const loginUser = async (email: string, password: string): Promise<boolean> => {
     try {
@@ -90,10 +95,19 @@ export const AuthProvider: FC<Props> = ({children}) => {
   };
 
   const logoutUser = async () => {
-    Cookies.remove("token");
     Cookies.remove("cart");
+    Cookies.remove("name");
+    Cookies.remove("lastName");
+    Cookies.remove("address");
+    Cookies.remove("address2");
+    Cookies.remove("zipCode");
+    Cookies.remove("city");
+    Cookies.remove("country");
+    Cookies.remove("phone");
+
+    signOut();
     dispatch({type: "Auth - Logout"});
-    router.reload();
+    // router.reload();
   };
 
   return (
