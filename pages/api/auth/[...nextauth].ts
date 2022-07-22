@@ -1,6 +1,7 @@
 import NextAuth from "next-auth";
-import GithubProvider from "next-auth/providers/github";
 import Credentials from "next-auth/providers/credentials";
+import GoogleProvider from "next-auth/providers/google";
+import GithubProvider from "next-auth/providers/github";
 
 import {dbUsers} from "../../../database";
 
@@ -25,6 +26,10 @@ export default NextAuth({
       async authorize(credentials) {
         return await dbUsers.checkUserEmailPassword(credentials!.email, credentials!.password);
       },
+    }),
+    GoogleProvider({
+      clientId: process.env.GOOGLE_CLIENT_ID as string,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
     }),
     GithubProvider({
       clientId: process.env.GITHUB_ID as string,

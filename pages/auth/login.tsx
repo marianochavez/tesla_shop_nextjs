@@ -19,6 +19,8 @@ import {GetServerSideProps} from "next";
 import {useState, useEffect} from "react";
 import {useRouter} from "next/router";
 import {getSession, signIn, getProviders} from "next-auth/react";
+import {FcGoogle} from "react-icons/fc";
+import {BsGithub} from "react-icons/bs";
 
 import {AuthLayout} from "../../components/layouts";
 import {validations} from "../../utils";
@@ -45,9 +47,18 @@ const LoginPage = () => {
     });
   }, []);
 
+  useEffect(() => {
+    const error = router.query.error as string;
+
+    if (error === "CredentialsSignin") {
+      setShowError(true);
+    }
+  }, [router]);
+
   const onLoginUser = async ({email, password}: FormData) => {
     setShowError(false);
 
+    // OLD WAY
     // const isValidLogin = await loginUser(email, password);
 
     // if (!isValidLogin) {
@@ -126,24 +137,30 @@ const LoginPage = () => {
 
           <GridItem>
             <Divider borderColor="blackAlpha.400" mb={2} mt={2} />
-
-            {Object.values(providers)
-              .filter((p: any) => p.id !== "credentials")
-              .map((provider: any) => {
-                return (
-                  <Button
-                    key={provider.id}
-                    colorScheme="purple"
-                    mb={2}
-                    mt={2}
-                    variant="outline"
-                    w="100%"
-                    onClick={() => signIn(provider.id)}
-                  >
-                    {provider.name}
-                  </Button>
-                );
-              })}
+            {providers.google && (
+              <Button
+                colorScheme="blue"
+                leftIcon={<Icon as={FcGoogle} />}
+                mt={2}
+                variant="outline"
+                w="100%"
+                onClick={() => signIn(providers.google.id)}
+              >
+                {providers.google.name}
+              </Button>
+            )}
+            {providers.github && (
+              <Button
+                colorScheme="blackAlpha"
+                leftIcon={<Icon as={BsGithub} fontSize="lg" />}
+                mt={3}
+                variant="outline"
+                w="100%"
+                onClick={() => signIn(providers.github.id)}
+              >
+                {providers.github.name}
+              </Button>
+            )}
           </GridItem>
         </Grid>
       </form>

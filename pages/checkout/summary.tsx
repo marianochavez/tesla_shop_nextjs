@@ -6,6 +6,7 @@ import {useContext, useEffect} from "react";
 
 import {CartList, OrderSummary} from "../../components/cart";
 import {ShopLayout} from "../../components/layouts";
+import {FullScreenLoading} from "../../components/ui";
 import {CartContext} from "../../context";
 import {countries} from "../../utils";
 
@@ -14,13 +15,16 @@ const SummaryPage = () => {
   const {shippingAddress, numberOfItems} = useContext(CartContext);
 
   useEffect(() => {
+    if (numberOfItems === 0) {
+      router.push("/cart/empty");
+    }
     if (!Cookies.get("name")) {
       router.push("/checkout/address");
     }
-  }, [router]);
+  }, [router, numberOfItems]);
 
-  if (!shippingAddress) {
-    return <></>;
+  if (!shippingAddress || numberOfItems === 0) {
+    return <FullScreenLoading />;
   }
 
   const {name, lastName, address, address2 = "", city, country, phone, zipCode} = shippingAddress;
