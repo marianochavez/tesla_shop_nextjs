@@ -1,22 +1,14 @@
-import {NextRequest, NextResponse, NextFetchEvent} from "next/server";
+import {NextRequest, NextResponse} from "next/server";
+import {getToken} from "next-auth/jwt";
 
-import {jwt} from "./utils";
+export async function middleware(req: NextRequest) {
+  const session = await getToken({req, secret: process.env.NEXTAUTH_SECRET});
 
-export function middleware(req: NextRequest, ev: NextFetchEvent) {
-  // ! hacer con NEXTAUTH
-  // const token = req.cookies.get("token") || "";
+  if (!session) {
+    const requestedPage = req.nextUrl.pathname;
 
-  // if (token.length < 10) {
-  //   return;
-  // }
-
-  // try {
-  //   const res = await jwt.isValidToken(token);
-
-  //   return NextResponse.next();
-  // } catch (error) {
-  //   return NextResponse.redirect(new URL(`/auth/login?p=${req.nextUrl.pathname}`, req.url));
-  // }
+    return NextResponse.redirect(new URL(`/auth/login?p=${requestedPage}`, req.url));
+  }
 
   return NextResponse.next();
 }

@@ -1,6 +1,8 @@
 import {Grid, Text, GridItem, Container, Stack, Divider, Box, Link, Button} from "@chakra-ui/react";
+import Cookies from "js-cookie";
 import NextLink from "next/link";
-import {useContext} from "react";
+import {useRouter} from "next/router";
+import {useContext, useEffect} from "react";
 
 import {CartList, OrderSummary} from "../../components/cart";
 import {ShopLayout} from "../../components/layouts";
@@ -8,7 +10,14 @@ import {CartContext} from "../../context";
 import {countries} from "../../utils";
 
 const SummaryPage = () => {
+  const router = useRouter();
   const {shippingAddress, numberOfItems} = useContext(CartContext);
+
+  useEffect(() => {
+    if (!Cookies.get("name")) {
+      router.push("/checkout/address");
+    }
+  }, [router]);
 
   if (!shippingAddress) {
     return <></>;
