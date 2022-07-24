@@ -13,12 +13,11 @@ import {
 import Cookies from "js-cookie";
 import {useRouter} from "next/router";
 import {useForm} from "react-hook-form";
-import {useContext, useEffect} from "react";
+import {useContext} from "react";
 
 import {ShopLayout} from "../../components/layouts";
 import {countries} from "../../utils";
 import {CartContext} from "../../context";
-import {FullScreenLoading} from "../../components/ui";
 
 type FormData = {
   name: string;
@@ -46,7 +45,7 @@ const getAddressFromCookies = (): FormData => {
 
 const AddressPage = () => {
   const router = useRouter();
-  const {numberOfItems, updateAddress} = useContext(CartContext);
+  const {updateAddress} = useContext(CartContext);
   const {
     register,
     handleSubmit,
@@ -55,20 +54,10 @@ const AddressPage = () => {
     defaultValues: getAddressFromCookies(),
   });
 
-  useEffect(() => {
-    if (numberOfItems === 0) {
-      router.push("/cart/empty");
-    }
-  }, [router, numberOfItems]);
-
   const onSubmit = (data: FormData) => {
     updateAddress(data);
     router.push("/checkout/summary");
   };
-
-  if (!numberOfItems) {
-    return <FullScreenLoading />;
-  }
 
   return (
     <ShopLayout pageDescription="Confirmar dirección del destino" title="Dirección">

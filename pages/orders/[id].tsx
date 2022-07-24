@@ -1,28 +1,41 @@
-import {Container, Link, Stack, Tag, TagLabel, TagLeftIcon, Text} from "@chakra-ui/react";
-import {MdCreditScore} from "react-icons/md";
-import NextLink from "next/link";
+import {GetServerSideProps, NextPage} from "next";
+import {Container, Stack, Tag, TagLabel, TagLeftIcon, Text} from "@chakra-ui/react";
+import {MdCreditScore, MdOutlineCreditCardOff} from "react-icons/md";
 import {Divider, Box} from "@chakra-ui/react";
+import {getSession} from "next-auth/react";
 
 import {CartList, OrderSummary} from "../../components/cart";
 import {ShopLayout} from "../../components/layouts/ShopLayout";
+import {dbOrders} from "../../database";
+import {IOrder} from "../../interfaces";
+import {countries} from "../../utils";
 
-const OrderPage = () => {
+interface Props {
+  order: IOrder;
+}
+
+const OrderPage: NextPage<Props> = ({order}) => {
+  const {shippingAddress} = order;
+
   return (
     <ShopLayout pageDescription="Resumen de la orden" title="Resumen de la orden 1235656">
-      <Text variant="h1">Orden: ABC123</Text>
+      <Text variant="h1">Orden: {order._id}</Text>
 
-      {/* <Tag colorScheme="red" my={2} size="md" variant="outline">
-        <TagLeftIcon as={MdOutlineCreditCardOff} />
-        <TagLabel>Pendiente de pago</TagLabel>
-      </Tag> */}
-      <Tag colorScheme="green" my={2} size="md" variant="outline">
-        <TagLeftIcon as={MdCreditScore} />
-        <TagLabel>Orden ya fue pagada</TagLabel>
-      </Tag>
+      {order.isPaid ? (
+        <Tag colorScheme="green" my={2} size="md" variant="outline">
+          <TagLeftIcon as={MdCreditScore} fontSize="lg" />
+          <TagLabel>Orden ya fue pagada</TagLabel>
+        </Tag>
+      ) : (
+        <Tag colorScheme="red" my={2} size="md" variant="outline">
+          <TagLeftIcon as={MdOutlineCreditCardOff} fontSize="lg" />
+          <TagLabel>Pendiente de pago</TagLabel>
+        </Tag>
+      )}
 
-      <Stack direction="row">
+      <Stack className="fadeIn" direction="row">
         <Stack direction="column" flex={1}>
-          <CartList />
+          <CartList editable={false} products={order.orderItems} />
         </Stack>
         <Container maxW="45%">
           <Stack
@@ -31,45 +44,106 @@ const OrderPage = () => {
             boxShadow="0px 5px 5px rgba(0, 0, 0, 0.2)"
             p={4}
           >
-            <Text variant="h2">Resumen (3 productos)</Text>
+            <Text variant="h2">
+              Resumen ({order.numberOfItems} {order.numberOfItems === 1 ? "producto" : "productos"})
+            </Text>
             <Divider my={1} />
 
             <Box display="flex" justifyContent="space-between">
               <Text variant="subtitle1">Dirección de entrega</Text>
-              <NextLink passHref href="/checkout/address">
-                <Link textDecor="underline">Editar</Link>
-              </NextLink>
             </Box>
 
-            <Text>Fernando Herrera</Text>
-            <Text>323 Algun lugar</Text>
-            <Text>Stittsville, HYA 23S</Text>
-            <Text>Canadá</Text>
-            <Text>+1 23123123</Text>
+            <Text>
+              {shippingAddress.name} {shippingAddress.lastName}
+            </Text>
+            <Text>
+              {shippingAddress.address}{" "}
+              {shippingAddress.address2 && `, ${shippingAddress.address2}`}
+            </Text>
+
+            <Text>
+              {shippingAddress.city}, {shippingAddress.zipCode}
+            </Text>
+            <Text>{countries.find((c) => c.code === shippingAddress.country)?.name}</Text>
+            <Text>{shippingAddress.phone}</Text>
 
             <Divider my={1} />
 
-            <Box display="flex" justifyContent="end">
-              <NextLink passHref href="/cart">
-                <Link textDecor="underline">Editar</Link>
-              </NextLink>
-            </Box>
-
-            <OrderSummary />
+            <OrderSummary
+              orderValues={{
+                numberOfItems: order.numberOfItems,
+                total: order.total,
+                subTotal: order.subTotal,
+                tax: order.tax,
+              }}
+            />
 
             <Box mt={3}>
-              <Text variant="h1">Pagar</Text>
-
-              <Tag colorScheme="green" my={2} size="md" variant="outline">
-                <TagLeftIcon as={MdCreditScore} />
-                <TagLabel>Orden ya fue pagada</TagLabel>
-              </Tag>
+              {order.isPaid ? (
+                <Tag
+                  colorScheme="green"
+                  justifyContent="center"
+                  my={2}
+                  p={3}
+                  size="md"
+                  variant="outline"
+                  w="100%"
+                >
+                  <TagLeftIcon as={MdCreditScore} fontSize="lg" />
+                  <TagLabel>Orden pagada</TagLabel>
+                </Tag>
+              ) : (
+                <Text variant="h1">Pagar</Text>
+              )}
             </Box>
           </Stack>
         </Container>
       </Stack>
     </ShopLayout>
   );
+};
+
+// You should use getServerSideProps when:
+// - Only if you need to pre-render a page whose data must be fetched at request time
+
+export const getServerSideProps: GetServerSideProps = async ({req, query}) => {
+  const {id = ""} = query as {id: string};
+  const session: any = await getSession({req});
+
+  if (!session) {
+    return {
+      redirect: {
+        destination: `/auth/login?p=/orders/${id}`,
+        permanent: false,
+      },
+    };
+  }
+
+  const order = await dbOrders.getOrderById(id.toString());
+
+  if (!order) {
+    return {
+      redirect: {
+        destination: "/orders/history",
+        permanent: false,
+      },
+    };
+  }
+
+  if (order.user !== session.user._id) {
+    return {
+      redirect: {
+        destination: "/orders/history",
+        permanent: false,
+      },
+    };
+  }
+
+  return {
+    props: {
+      order,
+    },
+  };
 };
 
 export default OrderPage;

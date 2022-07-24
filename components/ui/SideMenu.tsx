@@ -97,13 +97,14 @@ export const SideMenu = () => {
                   leftIcon={<BsBagCheck />}
                   size="md"
                   variant="ghost"
+                  onClick={() => navigateTo("/orders/history")}
                 >
                   Mis ordenes
                 </Button>
               </>
             )}
 
-            <Show below="sm">
+            <Show below="md">
               <Button
                 colorScheme="blackAlpha"
                 justifyContent="left"

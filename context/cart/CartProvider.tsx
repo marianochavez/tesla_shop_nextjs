@@ -1,7 +1,9 @@
 import {useReducer, useEffect} from "react";
 import Cookies from "js-cookie";
+import axios, {AxiosError} from "axios";
 
-import {ICartProduct, IShippingAddress} from "../../interfaces";
+import {ICartProduct, IOrder, IShippingAddress} from "../../interfaces";
+import {teslaApi} from "../../api";
 
 import {CartContext, cartReducer} from "./";
 
@@ -122,6 +124,45 @@ export const CartProvider: React.FunctionComponent<Props> = ({children}) => {
     dispatch({type: "Cart - Update Address", payload: address});
   };
 
+  const createOrder = async (): Promise<{hasError: boolean; message: string}> => {
+    if (!state.shippingAddress) {
+      throw new Error("No shipping address");
+    }
+
+    const body: IOrder = {
+      orderItems: state.cart.map((p) => ({
+        ...p,
+        size: p.size!,
+      })),
+      shippingAddress: state.shippingAddress,
+      numberOfItems: state.numberOfItems,
+      subTotal: state.subTotal,
+      tax: state.tax,
+      total: state.total,
+      isPaid: false,
+    };
+
+    try {
+      const {data} = await teslaApi.post<IOrder>("/orders", body);
+
+      dispatch({type: "Cart - Order complete"});
+
+      // * used because the useEffect for set cart in cookies is not
+      // * work properly in development mode
+      Cookies.set("cart", JSON.stringify([]));
+
+      return {hasError: false, message: data._id!};
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        const err = error as AxiosError<{message: string}>;
+
+        return {hasError: true, message: err.response?.data.message!};
+      }
+
+      return {hasError: true, message: "Unknown error"};
+    }
+  };
+
   return (
     <CartContext.Provider
       value={{
@@ -132,6 +173,9 @@ export const CartProvider: React.FunctionComponent<Props> = ({children}) => {
         updateCartQuantity,
         removeCartProduct,
         updateAddress,
+
+        // orders
+        createOrder,
       }}
     >
       {children}

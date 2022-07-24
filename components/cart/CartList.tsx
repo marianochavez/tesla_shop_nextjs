@@ -4,13 +4,14 @@ import {Box, Button, Image, Link, Stack, Text} from "@chakra-ui/react";
 
 import {ItemCounter} from "../ui";
 import {CartContext} from "../../context";
-import {ICartProduct} from "../../interfaces";
+import {IOrderItem, ICartProduct} from "../../interfaces";
 
 interface Props {
   editable?: boolean;
+  products?: IOrderItem[];
 }
 
-export const CartList: FC<Props> = ({editable = false}) => {
+export const CartList: FC<Props> = ({editable = false, products}) => {
   const {cart, updateCartQuantity, removeCartProduct} = useContext(CartContext);
 
   const onNewCartQauntity = (product: ICartProduct, newQuantity: number) => {
@@ -18,9 +19,11 @@ export const CartList: FC<Props> = ({editable = false}) => {
     updateCartQuantity(product);
   };
 
+  const productsToShow = products ? products : cart;
+
   return (
     <>
-      {cart.map((product) => (
+      {productsToShow.map((product) => (
         <Stack key={product.slug + product.size} direction="row" mb={2} spacing={2}>
           <Box>
             <NextLink passHref href={`/product/${product.slug}`}>
@@ -47,7 +50,7 @@ export const CartList: FC<Props> = ({editable = false}) => {
                 <ItemCounter
                   currentValue={product.quantity}
                   maxValue={10}
-                  updatedQuantity={(value) => onNewCartQauntity(product, value)}
+                  updatedQuantity={(value) => onNewCartQauntity(product as ICartProduct, value)}
                 />
               ) : (
                 <Text variant="h5">
@@ -63,7 +66,7 @@ export const CartList: FC<Props> = ({editable = false}) => {
                   colorScheme="red"
                   size="sm"
                   variant="ghost"
-                  onClick={() => removeCartProduct(product)}
+                  onClick={() => removeCartProduct(product as ICartProduct)}
                 >
                   Remover
                 </Button>

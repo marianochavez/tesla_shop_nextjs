@@ -1,8 +1,21 @@
-import {Grid, Text, GridItem, Container, Stack, Divider, Box, Link, Button} from "@chakra-ui/react";
+import {
+  Grid,
+  Text,
+  GridItem,
+  Container,
+  Stack,
+  Divider,
+  Box,
+  Link,
+  Button,
+  Tag,
+  Icon,
+} from "@chakra-ui/react";
 import Cookies from "js-cookie";
 import NextLink from "next/link";
 import {useRouter} from "next/router";
-import {useContext, useEffect} from "react";
+import {useContext, useEffect, useState} from "react";
+import {BiErrorCircle} from "react-icons/bi";
 
 import {CartList, OrderSummary} from "../../components/cart";
 import {ShopLayout} from "../../components/layouts";
@@ -12,18 +25,32 @@ import {countries} from "../../utils";
 
 const SummaryPage = () => {
   const router = useRouter();
-  const {shippingAddress, numberOfItems} = useContext(CartContext);
+  const {shippingAddress, numberOfItems, createOrder} = useContext(CartContext);
+
+  const [isPosting, setIsPosting] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
   useEffect(() => {
-    if (numberOfItems === 0) {
-      router.push("/cart/empty");
-    }
     if (!Cookies.get("name")) {
       router.push("/checkout/address");
     }
-  }, [router, numberOfItems]);
+  }, [router]);
 
-  if (!shippingAddress || numberOfItems === 0) {
+  const onCreateOrder = async () => {
+    setIsPosting(true);
+    const {hasError, message} = await createOrder();
+
+    if (hasError) {
+      setIsPosting(false);
+      setErrorMessage(message);
+
+      return;
+    }
+
+    router.replace(`/orders/${message}`);
+  };
+
+  if (!shippingAddress) {
     return <FullScreenLoading />;
   }
 
@@ -80,9 +107,19 @@ const SummaryPage = () => {
               <OrderSummary />
 
               <Box mt={3}>
-                <Button colorScheme="yellow" w="100%">
+                <Button colorScheme="yellow" disabled={isPosting} w="100%" onClick={onCreateOrder}>
                   Confirmar Orden
                 </Button>
+                <Tag
+                  colorScheme="red"
+                  display={errorMessage ? "flex" : "none"}
+                  mt={3}
+                  p={3}
+                  w="100%"
+                >
+                  <Icon as={BiErrorCircle} fontSize="lg" mr={1} />
+                  {errorMessage}
+                </Tag>
               </Box>
             </Stack>
           </Container>

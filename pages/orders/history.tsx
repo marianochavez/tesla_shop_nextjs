@@ -1,8 +1,12 @@
-import {Link, Tag, Text} from "@chakra-ui/react";
+import {GetServerSideProps, NextPage} from "next";
+import {Box, Link, Tag, Text} from "@chakra-ui/react";
 import Table from "rc-table";
 import NextLink from "next/link";
+import {getSession} from "next-auth/react";
 
 import {ShopLayout} from "../../components/layouts";
+import {dbOrders} from "../../database";
+import {IOrder} from "../../interfaces";
 
 const columns: any = [
   {
@@ -29,11 +33,11 @@ const columns: any = [
     className: "order-table-column",
     render: (params: any) => {
       return params.paid ? (
-        <Tag colorScheme="green" variant="outline">
+        <Tag borderRadius="15px" colorScheme="green" p={2} variant="outline">
           Pagada
         </Tag>
       ) : (
-        <Tag colorScheme="red" variant="outline">
+        <Tag borderRadius="15px" colorScheme="red" p={2} variant="outline">
           No pagada
         </Tag>
       );
@@ -48,7 +52,7 @@ const columns: any = [
     className: "order-table-column",
     render: (params: any) => {
       return (
-        <NextLink passHref href={`/orders/${params.id}`}>
+        <NextLink passHref href={`/orders/${params.orderId}`}>
           <Link textDecor="underline">Ver orden</Link>
         </NextLink>
       );
@@ -56,22 +60,50 @@ const columns: any = [
   },
 ];
 
-const rows: any = [
-  {id: 1, fullname: "Fernando Herrera", paid: true},
-  {id: 2, fullname: "Melissa Flores", paid: false},
-  {id: 3, fullname: "Hernando Vallejo", paid: true},
-  {id: 4, fullname: "Emin Reyes", paid: false},
-  {id: 5, fullname: "Eduardo Rios", paid: false},
-  {id: 6, fullname: "Natalia Herrera", paid: true},
-];
+interface Props {
+  orders: IOrder[];
+}
 
-const HistoryPage = () => {
+const HistoryPage: NextPage<Props> = ({orders}) => {
+  const rows: any = orders.map((order, i) => ({
+    id: i + 1,
+    key: order._id,
+    fullname: `${order.shippingAddress.name} ${order.shippingAddress.lastName}`,
+    paid: order.isPaid,
+    orderId: order._id,
+  }));
+
   return (
     <ShopLayout pageDescription="Historial de ordenes del cliente" title="Historial de ordenes">
       <Text variant="h1">Historial de ordenes</Text>
-      <Table className="order-table" columns={columns} data={rows} />
+      <Box className="fadeIn">
+        <Table className="order-table" columns={columns} data={rows} />
+      </Box>
     </ShopLayout>
   );
+};
+
+// You should use getServerSideProps when:
+// - Only if you need to pre-render a page whose data must be fetched at request time
+export const getServerSideProps: GetServerSideProps = async ({req}) => {
+  const session: any = await getSession({req});
+
+  if (!session) {
+    return {
+      redirect: {
+        destination: "auth/login?p=/orders/history",
+        permanent: false,
+      },
+    };
+  }
+
+  const orders = await dbOrders.getOrdersByUser(session.user._id);
+
+  return {
+    props: {
+      orders,
+    },
+  };
 };
 
 export default HistoryPage;
