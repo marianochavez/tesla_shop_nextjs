@@ -1,21 +1,62 @@
 import {GetServerSideProps, NextPage} from "next";
-import {Container, Stack, Tag, TagLabel, TagLeftIcon, Text} from "@chakra-ui/react";
+import {
+  Center,
+  Container,
+  Spinner,
+  Stack,
+  Tag,
+  TagLabel,
+  TagLeftIcon,
+  Text,
+} from "@chakra-ui/react";
 import {MdCreditScore, MdOutlineCreditCardOff} from "react-icons/md";
 import {Divider, Box} from "@chakra-ui/react";
 import {getSession} from "next-auth/react";
+import {PayPalButtons} from "@paypal/react-paypal-js";
+import {useRouter} from "next/router";
+import {useState} from "react";
 
 import {CartList, OrderSummary} from "../../components/cart";
 import {ShopLayout} from "../../components/layouts/ShopLayout";
 import {dbOrders} from "../../database";
 import {IOrder} from "../../interfaces";
 import {countries} from "../../utils";
+import {teslaApi} from "../../api";
+
+export type OrderResponseBody = {
+  id: string;
+  status: "COMPLETED" | "SAVED" | "APPROVED" | "VOIDED" | "COMPLETED" | "PAYER_ACTION_REQUIRED";
+};
 
 interface Props {
   order: IOrder;
 }
 
 const OrderPage: NextPage<Props> = ({order}) => {
+  const router = useRouter();
   const {shippingAddress} = order;
+  const [isPaying, setIsPaying] = useState(false);
+
+  const onOrderCompleted = async (details: OrderResponseBody) => {
+    if (details.status !== "COMPLETED") {
+      return alert("No hay pago en Paypal");
+    }
+    setIsPaying(true);
+
+    try {
+      await teslaApi.post(`/orders/pay`, {
+        transactionId: details.id,
+        orderId: order._id,
+      });
+
+      router.reload();
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.log(error);
+      setIsPaying(false);
+      alert("Error al procesar el pago");
+    }
+  };
 
   return (
     <ShopLayout pageDescription="Resumen de la orden" title="Resumen de la orden 1235656">
@@ -79,22 +120,44 @@ const OrderPage: NextPage<Props> = ({order}) => {
             />
 
             <Box mt={3}>
-              {order.isPaid ? (
-                <Tag
-                  colorScheme="green"
-                  justifyContent="center"
-                  my={2}
-                  p={3}
-                  size="md"
-                  variant="outline"
-                  w="100%"
-                >
-                  <TagLeftIcon as={MdCreditScore} fontSize="lg" />
-                  <TagLabel>Orden pagada</TagLabel>
-                </Tag>
-              ) : (
-                <Text variant="h1">Pagar</Text>
-              )}
+              <Center className="fadeIn" display={isPaying ? "flex" : "none"}>
+                <Spinner />
+              </Center>
+              <Box display={isPaying ? "none" : "flex"} flexDir="column">
+                {order.isPaid ? (
+                  <Tag
+                    colorScheme="green"
+                    justifyContent="center"
+                    my={2}
+                    p={3}
+                    size="md"
+                    variant="outline"
+                    w="100%"
+                  >
+                    <TagLeftIcon as={MdCreditScore} fontSize="lg" />
+                    <TagLabel>Orden pagada</TagLabel>
+                  </Tag>
+                ) : (
+                  <PayPalButtons
+                    createOrder={(data, actions) => {
+                      return actions.order.create({
+                        purchase_units: [
+                          {
+                            amount: {
+                              value: `${order.total}`,
+                            },
+                          },
+                        ],
+                      });
+                    }}
+                    onApprove={(data, actions) => {
+                      return actions.order!.capture().then((details) => {
+                        onOrderCompleted(details);
+                      });
+                    }}
+                  />
+                )}
+              </Box>
             </Box>
           </Stack>
         </Container>

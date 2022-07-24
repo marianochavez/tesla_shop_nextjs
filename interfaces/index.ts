@@ -3,3 +3,4 @@ export * from "./cart";
 export * from "./user";
 export * from "./shippingAddress";
 export * from "./order";
+export * as IPaypal from "./paypal";

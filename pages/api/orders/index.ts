@@ -53,12 +53,16 @@ const createOrder = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
       throw new Error(`El total no es correcto, recargue la pagina`);
     }
 
+    // Create the order
     const userId = session.user._id;
     const newOrder = new Order({
       ...req.body,
       isPaid: false,
       user: userId,
     });
+
+    // two decimal places
+    newOrder.total = Math.round(newOrder.total * 100) / 100;
 
     await newOrder.save();
 

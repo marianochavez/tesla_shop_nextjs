@@ -2,5 +2,9 @@
   "editor.formatOnSave": false,
 	"editor.codeActionsOnSave": {
 		"source.fixAll.eslint": true
-	}
+	},
+	"docwriter.style": "Auto-detect",
+	"docwriter.progress.trackClasses": false,
+	"docwriter.hotkey.mac": "⌘ + .",
+	"docwriter.progress.trackTypes": true
 }
