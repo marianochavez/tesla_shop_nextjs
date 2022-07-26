@@ -24,8 +24,8 @@ import {MdOutlineClear} from "react-icons/md";
 import {CartContext, UiContext} from "../../context";
 
 export const Navbar = () => {
-  const {pathname, push} = useRouter();
   const {toggleSideMenu} = useContext(UiContext);
+  const {pathname, push} = useRouter();
   const {numberOfItems} = useContext(CartContext);
 
   const [searchTerm, setSearchTerm] = useState("");

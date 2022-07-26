@@ -28,6 +28,7 @@ import {BsBagCheck, BsKey} from "react-icons/bs";
 import {SiTesla} from "react-icons/si";
 import {RiProductHuntLine} from "react-icons/ri";
 import {FaChild, FaUserCog} from "react-icons/fa";
+import {MdOutlineDashboard} from "react-icons/md";
 
 import {AuthContext, UiContext} from "../../context";
 
@@ -168,6 +169,16 @@ export const SideMenu = () => {
                 <Text color="gray" fontWeight="bold">
                   Admin Panel
                 </Text>
+                <Button
+                  colorScheme="blackAlpha"
+                  justifyContent="left"
+                  leftIcon={<MdOutlineDashboard />}
+                  size="md"
+                  variant="ghost"
+                  onClick={() => navigateTo("/admin")}
+                >
+                  Dashboard
+                </Button>
                 <Button
                   colorScheme="blackAlpha"
                   justifyContent="left"
