@@ -1,9 +1,9 @@
 import type {NextApiRequest, NextApiResponse} from "next";
 
-import {getToken} from "next-auth/jwt";
-
 import {db} from "../../../database";
 import {Order, Product, User} from "../../../models";
+
+import {adminMiddleware} from "./middleware";
 
 type Data =
   | {message: string}
@@ -16,21 +16,8 @@ type Data =
       lowInventory: number; // number of products with less than 5 in stock
     };
 
-const middleware = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
-  const session: any = await getToken({req, secret: process.env.NEXTAUTH_SECRET});
-  const validRoles = User.schema.path("role").options.enum.values;
-
-  if (!session) {
-    return res.status(401).json({message: "Unauthorized"});
-  }
-
-  if (!validRoles.includes(session.user.role)) {
-    return res.status(403).json({message: "Forbidden"});
-  }
-};
-
 export default function handler(req: NextApiRequest, res: NextApiResponse<Data>) {
-  middleware(req, res);
+  adminMiddleware(req, res);
 
   switch (req.method) {
     case "GET":

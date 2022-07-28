@@ -194,6 +194,7 @@ export const SideMenu = () => {
                   leftIcon={<BsBagCheck />}
                   size="md"
                   variant="ghost"
+                  onClick={() => navigateTo("/admin/orders")}
                 >
                   Ordenes
                 </Button>
@@ -203,6 +204,7 @@ export const SideMenu = () => {
                   leftIcon={<FaUserCog />}
                   size="md"
                   variant="ghost"
+                  onClick={() => navigateTo("/admin/users")}
                 >
                   Usuarios
                 </Button>

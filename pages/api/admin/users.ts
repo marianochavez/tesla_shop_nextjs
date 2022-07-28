@@ -1,30 +1,17 @@
 import type {NextApiRequest, NextApiResponse} from "next";
 
 import {isValidObjectId} from "mongoose";
-import {getToken} from "next-auth/jwt";
 
 import {db} from "../../../database";
 import {IUser} from "../../../interfaces";
 import {User} from "../../../models";
 
+import {adminMiddleware} from "./middleware";
+
 type Data = {message: string} | IUser[];
 
-const middleware = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
-  const session: any = await getToken({req, secret: process.env.NEXTAUTH_SECRET});
-  const validRoles = User.schema.path("role").options.enum.values;
-
-  if (!session) {
-    return res.status(401).json({message: "Unauthorized"});
-  }
-
-  if (!validRoles.includes(session.user.role)) {
-    return res.status(403).json({message: "Forbidden"});
-  }
-};
-
 export default function handler(req: NextApiRequest, res: NextApiResponse<Data>) {
-  // middleware(req, res);
-  // ! use
+  adminMiddleware(req, res);
 
   switch (req.method) {
     case "GET":
@@ -54,7 +41,7 @@ const updateUser = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
     return res.status(400).json({message: "Invalid userId"});
   }
 
-  const validRoles = User.schema.path("role").options.enum.values;
+  const validRoles = ["admin", "client", "superuser", "SEO"];
 
   if (!validRoles.includes(role)) {
     return res.status(400).json({message: "Invalid role"});
