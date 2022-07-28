@@ -79,7 +79,13 @@ const HistoryPage: NextPage<Props> = ({orders}) => {
         Historial de ordenes
       </Text>
       <Box className="fadeIn">
-        <Table className="order-table" columns={columns} data={rows} />
+        <Table
+          className="order-table"
+          columns={columns}
+          data={rows}
+          scroll={{x: 500}}
+          style={{width: "100%"}}
+        />
       </Box>
     </ShopLayout>
   );

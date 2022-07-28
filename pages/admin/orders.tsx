@@ -115,7 +115,13 @@ const OrdersPage = () => {
   return (
     <AdminLayout icon={<BsBagCheck />} subTitle="Mantenimiento de ordenes" title="Ordenes">
       <Box className="fadeIn">
-        <Table className="order-table" columns={columns} data={rows} />
+        <Table
+          className="order-table"
+          columns={columns}
+          data={rows}
+          scroll={{x: 700}}
+          style={{width: "100%"}}
+        />
       </Box>
     </AdminLayout>
   );
