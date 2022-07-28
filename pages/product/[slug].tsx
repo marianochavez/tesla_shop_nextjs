@@ -52,7 +52,7 @@ const ProductPage: NextPage<Props> = ({product}) => {
   return (
     <ShopLayout pageDescription={product.description} title={product.title}>
       <Stack direction={{base: "column", sm: "column", md: "column", lg: "row"}} spacing={6}>
-        <Container maxW="55%" p={0}>
+        <Container p={0}>
           <ProductSlideshow images={product.images} />
         </Container>
 

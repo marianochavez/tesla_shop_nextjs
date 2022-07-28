@@ -52,7 +52,7 @@ const UsersPage = () => {
       key: "email",
       title: "Email",
       dataIndex: "email",
-      width: 300,
+      width: 400,
       align: "left",
       className: "order-table-column",
     },
@@ -60,7 +60,7 @@ const UsersPage = () => {
       key: "name",
       title: "Name",
       dataIndex: "name",
-      width: 200,
+      width: 300,
       align: "left",
       className: "order-table-column",
     },
@@ -97,7 +97,7 @@ const UsersPage = () => {
 
   return (
     <AdminLayout icon={<MdPeople />} subTitle="Mantenimiento de usuarios" title="Usuarios">
-      <Box className="fadeIn">
+      <Box alignItems="center" className="fadeIn" display="flex" justifyContent="center">
         <Table className="order-table" columns={columns} data={rows} />
       </Box>
     </AdminLayout>

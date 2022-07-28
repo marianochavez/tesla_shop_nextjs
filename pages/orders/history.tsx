@@ -75,7 +75,9 @@ const HistoryPage: NextPage<Props> = ({orders}) => {
 
   return (
     <ShopLayout pageDescription="Historial de ordenes del cliente" title="Historial de ordenes">
-      <Text variant="h1">Historial de ordenes</Text>
+      <Text fontSize="2xl" fontWeight="bold">
+        Historial de ordenes
+      </Text>
       <Box className="fadeIn">
         <Table className="order-table" columns={columns} data={rows} />
       </Box>

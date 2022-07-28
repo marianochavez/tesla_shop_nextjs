@@ -60,7 +60,9 @@ const OrderPage: NextPage<Props> = ({order}) => {
 
   return (
     <ShopLayout pageDescription="Resumen de la orden" title="Resumen de la orden 1235656">
-      <Text variant="h1">Orden: {order._id}</Text>
+      <Text fontSize={["2xl"]} fontWeight="bold">
+        Orden: {order._id}
+      </Text>
 
       {order.isPaid ? (
         <Tag colorScheme="green" my={2} size="md" variant="outline">
@@ -74,11 +76,12 @@ const OrderPage: NextPage<Props> = ({order}) => {
         </Tag>
       )}
 
-      <Stack className="fadeIn" direction="row">
+      <Stack className="fadeIn" direction={["column", "column", "row"]}>
         <Stack direction="column" flex={1}>
           <CartList editable={false} products={order.orderItems} />
         </Stack>
-        <Container maxW="45%">
+        <Divider display={["flex", "flex", "none"]} pt={3} />
+        <Container maxW={["100%", "100%", "45%"]} p={{base: "15px 0 0 0", md: "15px 0 0 15px"}}>
           <Stack
             border="1px solid rgba(0, 0, 0, 0.1)"
             borderRadius="10px"

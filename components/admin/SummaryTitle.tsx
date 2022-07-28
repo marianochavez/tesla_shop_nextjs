@@ -14,7 +14,7 @@ export const SummaryTitle: FC<Props> = ({title, subTitle, icon}) => {
         {/* <Icon as={} color="blue.600" fontSize={50} /> */}
         {icon}
       </Box>
-      <Box alignItems="center" display="flex" flexDir="column" justifyContent="center">
+      <Box alignItems="center" display="flex" flex={1} flexDir="column" justifyContent="center">
         <Text variant="h1">{title}</Text>
         <Text fontSize="sm">{subTitle}</Text>
       </Box>

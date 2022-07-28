@@ -21,13 +21,25 @@ export const ItemCounter: FC<Props> = ({currentValue, updatedQuantity, maxValue}
 
   return (
     <Stack alignItems="center" direction="row" ml={2}>
-      <Button p={0} size="sm" variant="ghost" onClick={handleDecrementCounter}>
+      <Button
+        _hover={{backgroundColor: ""}}
+        p={0}
+        size="sm"
+        variant="ghost"
+        onClick={handleDecrementCounter}
+      >
         <AiOutlineMinusCircle fontSize="20px" />
       </Button>
       <Text p={0} px={2} textAlign="center">
         {currentValue}
       </Text>
-      <Button p={0} size="sm" variant="ghost" onClick={handleIncrementCounter}>
+      <Button
+        _hover={{backgroundColor: ""}}
+        p={0}
+        size="sm"
+        variant="ghost"
+        onClick={handleIncrementCounter}
+      >
         <AiOutlinePlusCircle fontSize="20px" />
       </Button>
     </Stack>

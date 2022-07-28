@@ -15,6 +15,7 @@ export const SizeSelector: FC<Props> = ({selectedSize, sizes, onSelectedSize}) =
       {sizes.map((size) => (
         <Button
           key={size}
+          _hover={{backgroundColor: "blackAlpha.100"}}
           backgroundColor={selectedSize === size ? "blackAlpha.700" : "white"}
           color={selectedSize === size ? "white" : "black"}
           size="sm"
