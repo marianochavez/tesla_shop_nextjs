@@ -1,18 +1,43 @@
-import React, {useEffect} from "react";
+import React, {useContext, useEffect} from "react";
 import {MdPeople} from "react-icons/md";
-import Table from "rc-table";
 import {Box, Select} from "@chakra-ui/react";
 import useSWR from "swr";
 import {useState} from "react";
+import {AgGridReact} from "ag-grid-react";
+import {GetServerSideProps, NextPage} from "next";
+import {getSession} from "next-auth/react";
 
 import {AdminLayout} from "../../components/layouts";
 import {FullScreenLoading} from "../../components/ui";
 import {IUser} from "../../interfaces";
 import {teslaApi} from "../../api";
+import {dbUsers} from "../../database";
+import {AuthContext} from "../../context";
 
-const UsersPage = () => {
+import "ag-grid-community/styles/ag-grid.css";
+import "ag-grid-community/styles/ag-theme-alpine.css";
+
+const defaultColDef = {
+  width: 300,
+  filter: true,
+  sortable: true,
+  resizable: true,
+};
+
+interface Props {
+  validUser: boolean;
+}
+
+const UsersPage: NextPage<Props> = ({validUser}) => {
+  const {logoutUser} = useContext(AuthContext);
   const {data, error} = useSWR<IUser[]>("/api/admin/users");
   const [users, setUsers] = useState<IUser[]>([]);
+
+  useEffect(() => {
+    if (!validUser) {
+      logoutUser();
+    }
+  }, [validUser, logoutUser]);
 
   useEffect(() => {
     if (data) {
@@ -48,31 +73,17 @@ const UsersPage = () => {
   };
 
   const columns: any = [
+    {field: "email", headerName: "Email", flex: 1, minWidth: 300},
+    {field: "name", headerName: "Name", flex: 1, minWidth: 200},
     {
-      key: "email",
-      title: "Email",
-      dataIndex: "email",
-      align: "left",
-      className: "order-table-column",
-    },
-    {
-      key: "name",
-      title: "Name",
-      dataIndex: "name",
-      align: "left",
-      className: "order-table-column",
-    },
-    {
-      key: "role",
-      title: "Rol",
-      align: "left",
-      className: "order-table-column",
-      render: (params: any) => {
+      field: "role",
+      headerName: "Rol",
+      cellRenderer: ({data}: any) => {
         return (
           <Select
-            value={params.role}
+            value={data.role}
             w="150px"
-            onChange={({target}) => onRoleUpdated(params.id, target.value)}
+            onChange={({target}) => onRoleUpdated(data.id, target.value)}
           >
             <option value="admin">Admin</option>
             <option value="client">Client</option>
@@ -86,7 +97,6 @@ const UsersPage = () => {
 
   const rows: any = users.map((user) => ({
     id: user._id,
-    key: user._id,
     email: user.email,
     name: user.name,
     role: user.role,
@@ -94,17 +104,38 @@ const UsersPage = () => {
 
   return (
     <AdminLayout icon={<MdPeople />} subTitle="Mantenimiento de usuarios" title="Usuarios">
-      <Box alignItems="center" className="fadeIn" display="flex" justifyContent="center" w="100%">
-        <Table
-          className="order-table"
-          columns={columns}
-          data={rows}
-          scroll={{x: 700, y: 400}}
-          style={{width: "100%"}}
+      <Box className="fadeIn ag-theme-alpine" h="calc(100vh - 170px)">
+        <AgGridReact
+          columnDefs={columns}
+          defaultColDef={defaultColDef}
+          pagination={true}
+          paginationAutoPageSize={true}
+          rowData={rows}
+          rowSelection={"single"}
         />
       </Box>
     </AdminLayout>
   );
+};
+
+export const getServerSideProps: GetServerSideProps = async ({req}) => {
+  const session: any = await getSession({req});
+
+  if (!session) {
+    return {
+      redirect: {
+        destination: "/auth/login?p=/orders/history",
+        permanent: false,
+      },
+    };
+  }
+  const validUser = await dbUsers.checkUserById(session.user._id);
+
+  return {
+    props: {
+      validUser,
+    },
+  };
 };
 
 export default UsersPage;

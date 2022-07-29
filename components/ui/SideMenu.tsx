@@ -26,9 +26,8 @@ import {
 import {useRouter} from "next/router";
 import {BsBagCheck, BsKey} from "react-icons/bs";
 import {SiTesla} from "react-icons/si";
-import {RiProductHuntLine} from "react-icons/ri";
 import {FaChild, FaUserCog} from "react-icons/fa";
-import {MdOutlineDashboard} from "react-icons/md";
+import {MdOutlineCategory, MdOutlineDashboard} from "react-icons/md";
 
 import {AuthContext, UiContext} from "../../context";
 
@@ -182,9 +181,10 @@ export const SideMenu = () => {
                 <Button
                   colorScheme="blackAlpha"
                   justifyContent="left"
-                  leftIcon={<RiProductHuntLine />}
+                  leftIcon={<MdOutlineCategory />}
                   size="md"
                   variant="ghost"
+                  onClick={() => navigateTo("/admin/products")}
                 >
                   Productos
                 </Button>

@@ -6,13 +6,9 @@ import {db} from "../../../database";
 import {IUser} from "../../../interfaces";
 import {User} from "../../../models";
 
-import {adminMiddleware} from "./middleware";
-
 type Data = {message: string} | IUser[];
 
 export default function handler(req: NextApiRequest, res: NextApiResponse<Data>) {
-  adminMiddleware(req, res);
-
   switch (req.method) {
     case "GET":
       return getUsers(req, res);

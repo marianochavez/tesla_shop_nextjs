@@ -1,55 +1,40 @@
-import {Box, Link, Tag} from "@chakra-ui/react";
-import Table from "rc-table";
+import {Box, Link, Tag, Text} from "@chakra-ui/react";
 import {BsBagCheck} from "react-icons/bs";
 import NextLink from "next/link";
 import useSWR from "swr";
+import {AgGridReact} from "ag-grid-react";
+import {GetServerSideProps, NextPage} from "next";
+import {getSession} from "next-auth/react";
+import {useContext, useEffect} from "react";
 
 import {AdminLayout} from "../../components/layouts";
 import {IOrder} from "../../interfaces/order";
 import {FullScreenLoading} from "../../components/ui";
 import {IUser} from "../../interfaces";
+import {dbUsers} from "../../database";
+import {AuthContext} from "../../context";
+
+import "ag-grid-community/styles/ag-grid.css";
+import "ag-grid-community/styles/ag-theme-alpine.css";
+
+const defaultColDef = {
+  width: 100,
+  filter: true,
+  sortable: true,
+  resizable: true,
+};
 
 const columns: any = [
+  {field: "id", headerName: "Orden ID"},
+  {field: "email", headerName: "Email", flex: 1, minWidth: 200},
+  {field: "name", headerName: "Nombre Completo"},
+  {field: "total", headerName: "Monto Total"},
   {
-    key: "id",
-    title: "Orden ID",
-    dataIndex: "id",
-    width: 300,
-    align: "left",
-    className: "order-table-column",
-  },
-  {
-    key: "email",
-    title: "Email",
-    dataIndex: "email",
-    width: 300,
-    align: "left",
-    className: "order-table-column",
-  },
-  {
-    key: "name",
-    title: "Nombre Completo",
-    dataIndex: "name",
-    width: 300,
-    align: "left",
-    className: "order-table-column",
-  },
-  {
-    key: "total",
-    title: "Monto Total",
-    dataIndex: "total",
-    width: 300,
-    align: "left",
-    className: "order-table-column",
-  },
-  {
-    key: "isPaid",
-    title: "Pagada",
-    width: 300,
-    align: "center",
-    className: "order-table-column",
-    render: (params: any) => {
-      return params.isPaid ? (
+    field: "isPaid",
+    headerName: "Pagada",
+    width: 120,
+    cellRenderer: ({data}: any) => {
+      return data.isPaid ? (
         <Tag borderRadius="15px" colorScheme="green" p={2} variant="outline">
           Pagada
         </Tag>
@@ -60,31 +45,14 @@ const columns: any = [
       );
     },
   },
+  {field: "noProductos", headerName: "No.Productos"},
+  {field: "createdAt", headerName: "Creada"},
   {
-    key: "noProductos",
-    title: "No.Productos",
-    dataIndex: "noProductos",
-    width: 300,
-    align: "center",
-    className: "order-table-column",
-  },
-  {
-    key: "createdAt",
-    title: "Creada",
-    dataIndex: "createdAt",
-    width: 300,
-    align: "left",
-    className: "order-table-column",
-  },
-  {
-    key: "check",
-    title: "Ver orden",
-    width: 300,
-    align: "left",
-    className: "order-table-column",
-    render: (params: any) => {
+    field: "check",
+    headerName: "Ver orden",
+    cellRenderer: ({data}: any) => {
       return (
-        <NextLink passHref href={`/admin/orders/${params.id}`}>
+        <NextLink passHref href={`/admin/orders/${data.id}`}>
           <Link target="_blank" textDecor="underline">
             Ver orden
           </Link>
@@ -94,13 +62,23 @@ const columns: any = [
   },
 ];
 
-const OrdersPage = () => {
+interface Props {
+  validUser: boolean;
+}
+
+const OrdersPage: NextPage<Props> = ({validUser}) => {
+  const {logoutUser} = useContext(AuthContext);
   const {data, error} = useSWR<IOrder[]>("/api/admin/orders");
+
+  useEffect(() => {
+    if (!validUser) {
+      logoutUser();
+    }
+  }, [validUser, logoutUser]);
 
   if (!data && !error) {
     return <FullScreenLoading />;
   }
-
   const rows: any = data!.map((order) => ({
     key: order._id,
     id: order._id,
@@ -114,17 +92,42 @@ const OrdersPage = () => {
 
   return (
     <AdminLayout icon={<BsBagCheck />} subTitle="Mantenimiento de ordenes" title="Ordenes">
-      <Box className="fadeIn">
-        <Table
-          className="order-table"
-          columns={columns}
-          data={rows}
-          scroll={{x: 700}}
-          style={{width: "100%"}}
-        />
+      <Box className="fadeIn ag-theme-alpine" h="calc(100vh - 170px)">
+        {data?.length === 0 ? (
+          <Text>No hay ordenes!</Text>
+        ) : (
+          <AgGridReact
+            columnDefs={columns}
+            defaultColDef={defaultColDef}
+            pagination={true}
+            paginationAutoPageSize={true}
+            rowData={rows}
+            rowSelection={"single"}
+          />
+        )}
       </Box>
     </AdminLayout>
   );
+};
+
+export const getServerSideProps: GetServerSideProps = async ({req}) => {
+  const session: any = await getSession({req});
+
+  if (!session) {
+    return {
+      redirect: {
+        destination: "/auth/login?p=/orders/history",
+        permanent: false,
+      },
+    };
+  }
+  const validUser = await dbUsers.checkUserById(session.user._id);
+
+  return {
+    props: {
+      validUser,
+    },
+  };
 };
 
 export default OrdersPage;

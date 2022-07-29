@@ -1,5 +1,6 @@
 import {SimpleGrid, Icon, Text} from "@chakra-ui/react";
-import React, {useState} from "react";
+import React, {useState, useEffect, useContext} from "react";
+import {GetServerSideProps, NextPage} from "next";
 import {
   MdAttachMoney,
   MdAvTimer,
@@ -12,17 +13,30 @@ import {
   MdProductionQuantityLimits,
 } from "react-icons/md";
 import useSWR from "swr";
-import {useEffect} from "react";
+import {getSession} from "next-auth/react";
 
 import {AdminLayout} from "../../components/layouts";
 import {SummaryTitle} from "../../components/admin";
 import {IDashboardSummaryResponse} from "../../interfaces";
 import {FullScreenLoading} from "../../components/ui";
+import {AuthContext} from "../../context";
+import {dbUsers} from "../../database";
 
-const DashboardPage = () => {
+interface Props {
+  validUser: boolean;
+}
+
+const DashboardPage: NextPage<Props> = ({validUser}) => {
+  const {logoutUser} = useContext(AuthContext);
   const {data, error} = useSWR<IDashboardSummaryResponse>("/api/admin/dashboard", {
     refreshInterval: 30 * 1000, // 30 seconds
   });
+
+  useEffect(() => {
+    if (!validUser) {
+      logoutUser();
+    }
+  }, [validUser, logoutUser]);
 
   const [refreshIn, setRefreshIn] = useState(30);
 
@@ -42,9 +56,8 @@ const DashboardPage = () => {
   }
 
   if (error) {
-    return <Text>Error al cargar la información</Text>;
+    return <Text>Error al cargar la información. Hable con un administrador.</Text>;
   }
-
   const {
     numberOfOrders,
     paidOrders,
@@ -100,6 +113,29 @@ const DashboardPage = () => {
       </SimpleGrid>
     </AdminLayout>
   );
+};
+
+// You should use getServerSideProps when:
+// - Only if you need to pre-render a page whose data must be fetched at request time
+
+export const getServerSideProps: GetServerSideProps = async ({req}) => {
+  const session: any = await getSession({req});
+
+  if (!session) {
+    return {
+      redirect: {
+        destination: "/auth/login",
+        permanent: false,
+      },
+    };
+  }
+  const validUser = await dbUsers.checkUserById(session.user._id);
+
+  return {
+    props: {
+      validUser,
+    },
+  };
 };
 
 export default DashboardPage;

@@ -4,6 +4,17 @@ import {User} from "../models";
 
 import {db} from ".";
 
+export const checkUserById = async (id: string = "") => {
+  await db.connect();
+  const user = await User.findById(id).lean();
+
+  await db.disconnect();
+
+  if (!user) return false;
+
+  return true;
+};
+
 export const checkUserEmailPassword = async (email: string = "", password: string = "") => {
   await db.connect();
   const user = await User.findOne({email}).lean();

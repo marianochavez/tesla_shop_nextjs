@@ -1,3 +1,4 @@
+import {useContext, useEffect, useState} from "react";
 import {GetServerSideProps, NextPage} from "next";
 import {
   Center,
@@ -9,19 +10,19 @@ import {
   TagLeftIcon,
   Text,
 } from "@chakra-ui/react";
-import {MdCreditScore, MdOutlineCreditCardOff} from "react-icons/md";
-import {Divider, Box} from "@chakra-ui/react";
-import {getSession} from "next-auth/react";
-import {PayPalButtons} from "@paypal/react-paypal-js";
 import {useRouter} from "next/router";
-import {useState} from "react";
+import {getSession} from "next-auth/react";
+import {Divider, Box} from "@chakra-ui/react";
+import {PayPalButtons} from "@paypal/react-paypal-js";
+import {MdCreditScore, MdOutlineCreditCardOff} from "react-icons/md";
 
 import {CartList, OrderSummary} from "../../components/cart";
 import {ShopLayout} from "../../components/layouts/ShopLayout";
-import {dbOrders} from "../../database";
+import {dbOrders, dbUsers} from "../../database";
 import {IOrder} from "../../interfaces";
 import {countries} from "../../utils";
 import {teslaApi} from "../../api";
+import {AuthContext} from "../../context";
 
 export type OrderResponseBody = {
   id: string;
@@ -29,13 +30,22 @@ export type OrderResponseBody = {
 };
 
 interface Props {
+  validUser: boolean;
   order: IOrder;
 }
 
-const OrderPage: NextPage<Props> = ({order}) => {
+const OrderPage: NextPage<Props> = ({validUser, order}) => {
   const router = useRouter();
+  const {logoutUser} = useContext(AuthContext);
   const {shippingAddress} = order;
   const [isPaying, setIsPaying] = useState(false);
+
+  useEffect(() => {
+    if (!validUser) {
+      logoutUser();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [validUser]);
 
   const onOrderCompleted = async (details: OrderResponseBody) => {
     if (details.status !== "COMPLETED") {
@@ -184,6 +194,7 @@ export const getServerSideProps: GetServerSideProps = async ({req, query}) => {
       },
     };
   }
+  const validUser = await dbUsers.checkUserById(session.user._id);
 
   const order = await dbOrders.getOrderById(id.toString());
 
@@ -207,6 +218,7 @@ export const getServerSideProps: GetServerSideProps = async ({req, query}) => {
 
   return {
     props: {
+      validUser,
       order,
     },
   };

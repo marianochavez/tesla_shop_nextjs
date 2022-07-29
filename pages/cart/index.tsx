@@ -22,7 +22,7 @@ const CartPage = () => {
   }
 
   return (
-    <ShopLayout pageDescription="Carrito de compras de la tienda" title="Carrito -3">
+    <ShopLayout pageDescription="Carrito de compras de la tienda" title="Carrito">
       <HStack alignItems="baseline" display="flex" mb={2}>
         <Icon as={BsCart4} fontSize="2xl" />
         <Text variant="h1">Carrito</Text>

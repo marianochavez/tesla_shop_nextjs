@@ -34,11 +34,12 @@ const OrderPage: NextPage<Props> = ({order}) => {
         </Tag>
       )}
 
-      <Stack className="fadeIn" direction="row">
+      <Stack className="fadeIn" direction={["column", "column", "row"]}>
         <Stack direction="column" flex={1}>
           <CartList editable={false} products={order.orderItems} />
         </Stack>
-        <Container maxW="45%">
+        <Divider display={["flex", "flex", "none"]} pt={3} />
+        <Container maxW={["100%", "100%", "45%"]} p={{base: "15px 0 0 0", md: "15px 0 0 15px"}}>
           <Stack
             border="1px solid rgba(0, 0, 0, 0.1)"
             borderRadius="10px"

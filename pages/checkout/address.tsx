@@ -1,3 +1,4 @@
+import {useContext} from "react";
 import {
   Box,
   Button,
@@ -13,7 +14,6 @@ import {
 import Cookies from "js-cookie";
 import {useRouter} from "next/router";
 import {useForm} from "react-hook-form";
-import {useContext} from "react";
 
 import {ShopLayout} from "../../components/layouts";
 import {countries} from "../../utils";
@@ -213,30 +213,24 @@ const AddressPage = () => {
   );
 };
 
-// You should use getServerSideProps when:
-// - Only if you need to pre-render a page whose data must be fetched at request time
 // export const getServerSideProps: GetServerSideProps = async ({req}) => {
-//   const {token = ""} = req.cookies;
-//   let isValidToken = false;
+//   const session: any = await getSession({req});
 
-//   try {
-//     await jwt.isValidToken(token);
-//     isValidToken = true;
-//   } catch (error) {
-//     isValidToken = false;
-//   }
-
-//   if (!isValidToken) {
+//   if (!session) {
 //     return {
 //       redirect: {
-//         destination: "/auth/login?p=/checkout/address",
+//         destination: "/auth/login",
 //         permanent: false,
 //       },
 //     };
 //   }
 
+//   const validUser = await dbUsers.checkUserById(session.user._id);
+
 //   return {
-//     props: {},
+//     props: {
+//       validUser,
+//     },
 //   };
 // };
 

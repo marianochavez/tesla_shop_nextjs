@@ -124,4 +124,25 @@ const SummaryPage = () => {
   );
 };
 
+// export const getServerSideProps: GetServerSideProps = async ({req}) => {
+//   const session: any = await getSession({req});
+
+//   if (!session) {
+//     return {
+//       redirect: {
+//         destination: "/auth/login",
+//         permanent: false,
+//       },
+//     };
+//   }
+
+//   const validUser = await dbUsers.checkUserById(session.user._id);
+
+//   return {
+//     props: {
+//       validUser,
+//     },
+//   };
+// };
+
 export default SummaryPage;

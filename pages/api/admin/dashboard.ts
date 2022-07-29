@@ -3,8 +3,6 @@ import type {NextApiRequest, NextApiResponse} from "next";
 import {db} from "../../../database";
 import {Order, Product, User} from "../../../models";
 
-import {adminMiddleware} from "./middleware";
-
 type Data =
   | {message: string}
   | {
@@ -16,9 +14,7 @@ type Data =
       lowInventory: number; // number of products with less than 5 in stock
     };
 
-export default function handler(req: NextApiRequest, res: NextApiResponse<Data>) {
-  adminMiddleware(req, res);
-
+export default async function handler(req: NextApiRequest, res: NextApiResponse<Data>) {
   switch (req.method) {
     case "GET":
       return getData(req, res);

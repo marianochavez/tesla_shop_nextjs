@@ -50,6 +50,7 @@ const createOrder = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
     const backendTotal = subTotal * (taxRate + 1);
 
     if (total !== backendTotal) {
+      await db.disconnect();
       throw new Error(`El total no es correcto, recargue la pagina`);
     }
 
@@ -65,6 +66,7 @@ const createOrder = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
     newOrder.total = Math.round(newOrder.total * 100) / 100;
 
     await newOrder.save();
+    await db.disconnect();
 
     return res.status(201).json(newOrder);
   } catch (error: any) {

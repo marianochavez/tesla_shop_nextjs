@@ -42,9 +42,10 @@ export default NextAuth({
     newUser: "/auth/register",
   },
   session: {
-    maxAge: 2592000, // 1 month
+    maxAge: 86400, // 1 day
     strategy: "jwt",
-    updateAge: 86400, // 1 day
+    // This option is ignored if using JSON Web Tokens
+    // updateAge: 86400,
   },
   // callbacks
   callbacks: {

@@ -27,8 +27,12 @@ export const AdminLayout: FC<Props> = ({children, title, subTitle, icon}) => {
       >
         <Box>
           <Box alignItems="center" display="flex" flexDir="row" gap={2}>
-            <Text variant="h1">{icon}</Text>
-            <Text variant="h1">{title}</Text>
+            <Text fontSize="2xl" fontWeight="bold">
+              {icon}
+            </Text>
+            <Text fontSize="2xl" fontWeight="bold">
+              {title}
+            </Text>
           </Box>
           <Text mb={2} variant="h2">
             {subTitle}

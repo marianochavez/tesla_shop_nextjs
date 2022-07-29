@@ -4,8 +4,6 @@ import {db} from "../../../database";
 import {IOrder} from "../../../interfaces";
 import {Order} from "../../../models";
 
-import {adminMiddleware} from "./middleware";
-
 type Data =
   | {
       message: string;
@@ -13,8 +11,6 @@ type Data =
   | IOrder[];
 
 export default function handler(req: NextApiRequest, res: NextApiResponse<Data>) {
-  adminMiddleware(req, res);
-
   switch (req.method) {
     case "GET":
       return getOrders(req, res);

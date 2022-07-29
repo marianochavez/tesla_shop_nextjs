@@ -2,7 +2,6 @@ import {FC, useReducer, useEffect} from "react";
 import axios from "axios";
 import Cookies from "js-cookie";
 import {useSession, signOut} from "next-auth/react";
-import {useRouter} from "next/router";
 
 import {teslaApi} from "../../api";
 import {IUser} from "../../interfaces";
@@ -24,7 +23,6 @@ const AUTH_INITIAL_STATE: AuthState = {
 };
 
 export const AuthProvider: FC<Props> = ({children}) => {
-  const router = useRouter();
   const [state, dispatch] = useReducer(authReducer, AUTH_INITIAL_STATE);
 
   const {data, status} = useSession();
@@ -34,19 +32,6 @@ export const AuthProvider: FC<Props> = ({children}) => {
       dispatch({type: "Auth - Login", payload: data?.user as IUser});
     }
   }, [status, data]);
-
-  // const checkToken = async () => {
-  //   if (!Cookies.get("token")) return;
-  //   try {
-  //     const {data} = await teslaApi.get("/user/validate-token");
-  //     const {token, user} = data;
-
-  //     Cookies.set("token", token);
-  //     dispatch({type: "Auth - Login", payload: user});
-  //   } catch (error) {
-  //     Cookies.set("token", "");
-  //   }
-  // };
 
   const loginUser = async (email: string, password: string): Promise<boolean> => {
     try {
