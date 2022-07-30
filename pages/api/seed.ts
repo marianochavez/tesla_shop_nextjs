@@ -13,14 +13,18 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
   }
 
   await db.connect();
+  const {users, products} = seedDatabase.initialData;
 
   await User.deleteMany();
-  await User.insertMany(seedDatabase.initialData.users);
+  await User.insertMany(users);
 
   await Product.deleteMany();
-  await Product.insertMany(seedDatabase.initialData.products);
+  await Product.insertMany(products);
+
+  const orders = await seedDatabase.generateOrders();
 
   await Order.deleteMany();
+  await Order.insertMany(orders);
 
   await db.disconnect();
 

@@ -5,7 +5,7 @@ import {Divider, Box} from "@chakra-ui/react";
 
 import {CartList, OrderSummary} from "../../../components/cart";
 import {dbOrders} from "../../../database";
-import {IOrder} from "../../../interfaces";
+import {IOrder, IUser} from "../../../interfaces";
 import {countries} from "../../../utils";
 import {AdminLayout} from "../../../components/layouts";
 
@@ -50,6 +50,23 @@ const OrderPage: NextPage<Props> = ({order}) => {
               Resumen ({order.numberOfItems} {order.numberOfItems === 1 ? "producto" : "productos"})
             </Text>
             <Divider my={1} />
+
+            <Box display="flex" flexDir="column">
+              <Text variant="subtitle1">Usuario</Text>
+              <Text>{(order.user as IUser).email}</Text>
+              <Text>{(order.user as IUser).name}</Text>
+              <Text>{(order.user as IUser).role}</Text>
+            </Box>
+
+            <Box display="flex" flexDir="column">
+              <Text variant="subtitle1">Orden creada</Text>
+              <Text>{new Date(order.createdAt!).toLocaleString("es-AR")}</Text>
+            </Box>
+
+            <Box display="flex" flexDir="column">
+              <Text variant="subtitle1">Orden actualizada</Text>
+              <Text>{new Date(order.updatedAt!).toLocaleString("es-AR")}</Text>
+            </Box>
 
             <Box display="flex" justifyContent="space-between">
               <Text variant="subtitle1">Dirección de entrega</Text>
@@ -124,7 +141,7 @@ const OrderPage: NextPage<Props> = ({order}) => {
 export const getServerSideProps: GetServerSideProps = async ({query}) => {
   const {id = ""} = query as {id: string};
 
-  const order = await dbOrders.getOrderById(id.toString());
+  const order = await dbOrders.getOrderById(id.toString(), true);
 
   if (!order) {
     return {

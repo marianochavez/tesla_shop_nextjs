@@ -25,9 +25,9 @@ const defaultColDef = {
 };
 
 const columns: any = [
-  {field: "id", headerName: "Orden ID"},
+  {field: "id", headerName: "Orden ID", flex: 1, minWidth: 200},
   {field: "email", headerName: "Email", flex: 1, minWidth: 200},
-  {field: "name", headerName: "Nombre Completo"},
+  {field: "name", headerName: "Nombre Completo", flex: 1, minWidth: 200},
   {field: "total", headerName: "Monto Total"},
   {
     field: "isPaid",
@@ -35,18 +35,32 @@ const columns: any = [
     width: 120,
     cellRenderer: ({data}: any) => {
       return data.isPaid ? (
-        <Tag borderRadius="15px" colorScheme="green" p={2} variant="outline">
+        <Tag
+          borderRadius="15px"
+          colorScheme="green"
+          justifyContent="center"
+          p={2}
+          variant="outline"
+          w="150px"
+        >
           Pagada
         </Tag>
       ) : (
-        <Tag borderRadius="15px" colorScheme="red" p={2} variant="outline">
+        <Tag
+          borderRadius="15px"
+          colorScheme="red"
+          justifyContent="center"
+          p={2}
+          variant="outline"
+          w="150px"
+        >
           No pagada
         </Tag>
       );
     },
   },
   {field: "noProductos", headerName: "No.Productos"},
-  {field: "createdAt", headerName: "Creada"},
+  {field: "createdAt", headerName: "Creada", flex: 1, minWidth: 200},
   {
     field: "check",
     headerName: "Ver orden",
@@ -87,7 +101,7 @@ const OrdersPage: NextPage<Props> = ({validUser}) => {
     total: order.total,
     isPaid: order.isPaid,
     noProductos: order.numberOfItems,
-    createdAt: new Date(order.createdAt!).toLocaleDateString("es-AR"),
+    createdAt: new Date(order.createdAt!).toLocaleString("es-AR"),
   }));
 
   return (

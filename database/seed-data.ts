@@ -1,4 +1,6 @@
-import {productsFaker, usersFaker} from "./faker";
+import {IOrder} from "../interfaces";
+
+import {ordersFaker, productsFaker, usersFaker} from "./faker";
 
 export interface SeedProduct {
   description: string;
@@ -32,3 +34,5 @@ export const initialData: SeedData = {
   users: usersFaker(),
   products: productsFaker,
 };
+
+export const generateOrders = async (): Promise<IOrder[]> => await ordersFaker();

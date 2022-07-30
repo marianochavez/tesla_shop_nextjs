@@ -1,5 +1,7 @@
 import type {NextApiRequest, NextApiResponse} from "next";
 
+import {isValidObjectId} from "mongoose";
+
 import {db} from "../../../database";
 import {IProduct} from "../../../interfaces";
 import {Product} from "../../../models";
@@ -8,6 +10,7 @@ type Data =
   | {
       message: string;
     }
+  | IProduct
   | IProduct[];
 
 export default function handler(req: NextApiRequest, res: NextApiResponse<Data>) {
@@ -16,10 +19,10 @@ export default function handler(req: NextApiRequest, res: NextApiResponse<Data>)
       return getProducts(req, res);
 
     case "POST":
-    // return createProduct(req, res);
+      return createProduct(req, res);
 
     case "PUT":
-    // return updateProduct(req, res);
+      return updateProduct(req, res);
 
     default:
       res.status(405).json({message: "Method Not Allowed"});
@@ -35,4 +38,68 @@ const getProducts = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
   // TODO actualizar las imagenes
 
   res.status(200).json(products);
+};
+
+const createProduct = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
+  const {images = []} = req.body as IProduct;
+
+  if (images.length < 2) {
+    return res.status(400).json({message: "Images must be at least 2"});
+  }
+
+  try {
+    await db.connect();
+    const productDb = await Product.findOne({slug: req.body.slug}).lean();
+
+    if (productDb) {
+      return res.status(400).json({message: "Product already exists"});
+    }
+    const product = new Product(req.body);
+
+    await product.save();
+    await db.disconnect();
+
+    return res.status(201).json(product);
+  } catch (error) {
+    // eslint-disable-next-line no-console
+    console.log(error);
+    await db.disconnect();
+
+    return res.status(400).json({message: "Check logs"});
+  }
+};
+
+const updateProduct = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
+  const {_id = "", images = []} = req.body as IProduct;
+
+  if (!isValidObjectId(_id)) {
+    return res.status(400).json({message: "Invalid product id"});
+  }
+
+  if (images.length < 2) {
+    return res.status(400).json({message: "Images must be at least 2"});
+  }
+
+  try {
+    await db.connect();
+    const product = await Product.findByIdAndUpdate(_id, req.body, {new: true}).lean();
+
+    if (!product) {
+      await db.disconnect();
+
+      return res.status(400).json({message: "Product not found"});
+    }
+
+    // todo eliminar fotos en cloudinary
+
+    await db.disconnect();
+
+    return res.status(200).json(product);
+  } catch (error) {
+    // eslint-disable-next-line no-console
+    console.log(error);
+    await db.disconnect();
+
+    return res.status(500).json({message: "Internal Server Error"});
+  }
 };

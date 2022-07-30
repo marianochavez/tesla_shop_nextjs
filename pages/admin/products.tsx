@@ -1,10 +1,11 @@
 import React, {useContext, useEffect} from "react";
-import {Box, Image} from "@chakra-ui/react";
+import {Box, Button, Image, Link} from "@chakra-ui/react";
 import {AgGridReact} from "ag-grid-react";
-import {MdOutlineCategory} from "react-icons/md";
+import {MdAdd, MdOutlineCategory} from "react-icons/md";
 import useSWR from "swr";
 import {GetServerSideProps, NextPage} from "next";
 import {getSession} from "next-auth/react";
+import NextLink from "next/link";
 
 import {IProduct} from "../../interfaces";
 import {AdminLayout} from "../../components/layouts";
@@ -34,7 +35,19 @@ const columns: any = [
       );
     },
   },
-  {field: "title", headerName: "Titulo", flex: 1, minWidth: 300},
+  {
+    field: "title",
+    headerName: "Titulo",
+    flex: 1,
+    minWidth: 300,
+    cellRenderer: ({data}: any) => {
+      return (
+        <NextLink passHref href={`/admin/products/${data.slug}`}>
+          <Link textDecor="underline">{data.title}</Link>
+        </NextLink>
+      );
+    },
+  },
   {field: "gender", headerName: "Género"},
   {field: "type", headerName: "Tipo"},
   {field: "inStock", headerName: "Stock"},
@@ -77,6 +90,19 @@ const ProductsPage: NextPage<Props> = ({validUser}) => {
       subTitle="Mantenimiento de productos"
       title={`Productos (${data?.length})`}
     >
+      <Box display="flex" justifyContent="end" mb={2}>
+        <NextLink passHref href="/admin/products/new">
+          <Link
+            _hover={{backgroundColor: "yellow.500"}}
+            as={Button}
+            backgroundColor="yellow.400"
+            leftIcon={<MdAdd />}
+            size="sm"
+          >
+            Crear producto
+          </Link>
+        </NextLink>
+      </Box>
       <Box className="fadeIn ag-theme-alpine" h="calc(100vh - 170px)">
         <AgGridReact
           columnDefs={columns}

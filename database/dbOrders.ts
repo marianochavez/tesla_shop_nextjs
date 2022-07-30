@@ -5,12 +5,12 @@ import {Order} from "../models";
 
 import {db} from ".";
 
-export const getOrderById = async (id: string): Promise<IOrder | null> => {
+export const getOrderById = async (id: string, populate?: boolean): Promise<IOrder | null> => {
   if (!isValidObjectId(id)) return null;
 
   await db.connect();
 
-  const order = await Order.findById(id);
+  const order = populate ? await Order.findById(id).populate("user") : await Order.findById(id);
 
   await db.disconnect();
 
