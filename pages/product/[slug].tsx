@@ -1,6 +1,6 @@
 import {useContext, useState} from "react";
 import {NextPage, GetStaticPaths, GetStaticProps} from "next";
-import {Box, Stack, Text, Container, Button, Tag} from "@chakra-ui/react";
+import {Box, Stack, Text, Button, Tag} from "@chakra-ui/react";
 import {useRouter} from "next/router";
 
 import {ShopLayout} from "../../components/layouts";
@@ -51,12 +51,12 @@ const ProductPage: NextPage<Props> = ({product}) => {
 
   return (
     <ShopLayout pageDescription={product.description} title={product.title}>
-      <Stack direction={{base: "column", sm: "column", md: "column", lg: "row"}} spacing={6}>
-        <Container p={0}>
+      <Stack direction={{base: "column", sm: "column", md: "row", lg: "row"}} spacing={6}>
+        <Box maxW={["100%", "100%", "60%"]}>
           <ProductSlideshow images={product.images} />
-        </Container>
+        </Box>
 
-        <Stack maxW="container.sm">
+        <Stack flex={1} maxW={["100%", "100%", "100%", "80%"]} p="15px 0 0 0">
           {/* titulos */}
           <Text variant="h1">{product.title}</Text>
           <Text variant="subtitle1">{`$${product.price}`}</Text>

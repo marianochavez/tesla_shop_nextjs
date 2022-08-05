@@ -30,7 +30,7 @@ const columns: any = [
     cellRenderer: ({data}: any) => {
       return (
         <a href={`/product/${data.slug}`} rel="noreferrer" target="_blank">
-          <Image alt={data.title} className="fadeIn" src={`/products/${data.img}`} w={50} />
+          <Image alt={data.title} className="fadeIn" src={`${data.img}`} w={50} />
         </a>
       );
     },

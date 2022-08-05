@@ -1,6 +1,7 @@
 import type {NextApiRequest, NextApiResponse} from "next";
 
 import {isValidObjectId} from "mongoose";
+import {v2 as cloudinary} from "cloudinary";
 
 import {db} from "../../../database";
 import {IProduct} from "../../../interfaces";
@@ -35,9 +36,16 @@ const getProducts = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
 
   await db.disconnect();
 
-  // TODO actualizar las imagenes
+  const updatedProducts = products.map((product) => {
+    // Display image correctly from cloudinary or local
+    product.images = product.images.map((image) => {
+      return image.includes("http") ? image : `${process.env.HOST_NAME}/products/${image}`;
+    });
 
-  res.status(200).json(products);
+    return product;
+  });
+
+  res.status(200).json(updatedProducts);
 };
 
 const createProduct = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
@@ -82,7 +90,7 @@ const updateProduct = async (req: NextApiRequest, res: NextApiResponse<Data>) =>
 
   try {
     await db.connect();
-    const product = await Product.findByIdAndUpdate(_id, req.body, {new: true}).lean();
+    const product = await Product.findById(_id).lean();
 
     if (!product) {
       await db.disconnect();
@@ -90,8 +98,17 @@ const updateProduct = async (req: NextApiRequest, res: NextApiResponse<Data>) =>
       return res.status(400).json({message: "Product not found"});
     }
 
-    // todo eliminar fotos en cloudinary
+    // Delete images from cloudinary
+    product.images.forEach(async (image) => {
+      if (!images.includes(image)) {
+        const fileId = image.substring(image.lastIndexOf("/") + 1).split(".")[0];
 
+        // add tesla-shop to public_id to get the folder
+        await cloudinary.uploader.destroy(`tesla-shop/${fileId}`);
+      }
+    });
+
+    await Product.findByIdAndUpdate(_id, {$set: req.body}).lean();
     await db.disconnect();
 
     return res.status(200).json(product);

@@ -4,10 +4,7 @@ import {db, SHOP_CONSTANTS} from "../../../database";
 import {IProduct} from "../../../interfaces";
 import {Product} from "../../../models";
 
-type Data = {
-  message: string;
-  products?: IProduct[];
-};
+type Data = {message: string} | IProduct[];
 
 export default function handler(req: NextApiRequest, res: NextApiResponse<Data>) {
   switch (req.method) {
@@ -35,6 +32,14 @@ const getProducts = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
     .lean();
 
   await db.disconnect();
+  const updatedProducts: IProduct[] = products.map((product) => {
+    // Display image correctly from cloudinary or local
+    product.images = product.images.map((image) => {
+      return image.includes("http") ? image : `${process.env.HOST_NAME}/products/${image}`;
+    });
 
-  res.status(200).json({message: "OK", products});
+    return product;
+  });
+
+  res.status(200).json(updatedProducts);
 };

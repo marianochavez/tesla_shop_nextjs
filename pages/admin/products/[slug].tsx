@@ -22,7 +22,7 @@ import {
 import {GetServerSideProps, NextPage} from "next";
 import {useForm} from "react-hook-form";
 import {MdEdit, MdOutlineSave, MdUpload} from "react-icons/md";
-import {useEffect, useState} from "react";
+import {ChangeEvent, useEffect, useRef, useState} from "react";
 import {useRouter} from "next/router";
 
 import {AdminLayout} from "../../../components/layouts";
@@ -55,6 +55,7 @@ interface Props {
 
 const ProductAdminPage: NextPage<Props> = ({product}) => {
   const router = useRouter();
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [newTagValue, setNewTagValue] = useState("");
   const [isSaving, setIsSaving] = useState(false);
   const {
@@ -111,6 +112,32 @@ const ProductAdminPage: NextPage<Props> = ({product}) => {
     setValue(
       "tags",
       currentTags.filter((t) => t !== deleteTag),
+      {shouldValidate: true},
+    );
+  };
+
+  const onFilesSelected = async ({target}: ChangeEvent<HTMLInputElement>) => {
+    if (!target.files || target.files.length === 0) return;
+
+    try {
+      for (const file of target.files) {
+        const formData = new FormData();
+
+        formData.append("files", file);
+        const {data} = await teslaApi.post<{message: string}>("/admin/upload", formData);
+
+        setValue("images", [...getValues("images"), data.message], {shouldValidate: true});
+      }
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.log(error);
+    }
+  };
+
+  const onDeleteImage = (image: string) => {
+    setValue(
+      "images",
+      getValues("images").filter((i) => i !== image),
       {shouldValidate: true},
     );
   };
@@ -294,7 +321,6 @@ const ProductAdminPage: NextPage<Props> = ({product}) => {
                 }}
               />
             </FormControl>
-
             <Box display="flex" flexWrap="wrap" mt={4} p={0}>
               {getValues("tags").map((tag) => {
                 return (
@@ -310,12 +336,26 @@ const ProductAdminPage: NextPage<Props> = ({product}) => {
 
             <Stack flexDir="column">
               <FormLabel mb={1}>Imágenes</FormLabel>
-              <Button colorScheme="orange" leftIcon={<Icon as={MdUpload} fontSize="lg" />} w="100%">
+              <Button
+                colorScheme="orange"
+                leftIcon={<Icon as={MdUpload} fontSize="lg" />}
+                w="100%"
+                onClick={() => fileInputRef.current?.click()}
+              >
                 Cargar imagen
               </Button>
+              <input
+                ref={fileInputRef}
+                multiple
+                accept="image/png, image/gif, image/jpeg"
+                style={{display: "none"}}
+                type="file"
+                onChange={onFilesSelected}
+              />
 
               <Tag
                 colorScheme="red"
+                display={getValues("images").length < 2 ? "flex" : "none"}
                 fontWeight="bold"
                 justifyContent="center"
                 p={2}
@@ -325,15 +365,10 @@ const ProductAdminPage: NextPage<Props> = ({product}) => {
               </Tag>
 
               <Grid gap={2} templateColumns={["repeat(4,1fr)"]}>
-                {product.images.map((img) => (
+                {getValues("images").map((img) => (
                   <GridItem key={img} display="flex" flexDir="column" justifyContent="center">
-                    <Image
-                      alt={product.title}
-                      borderRadius="7px"
-                      className="fadeIn"
-                      src={`/products/${img}`}
-                    />
-                    <Button colorScheme="red" mt={1}>
+                    <Image alt={product.title} borderRadius="7px" className="fadeIn" src={img} />
+                    <Button colorScheme="red" mt={1} onClick={() => onDeleteImage(img)}>
                       Borrar
                     </Button>
                   </GridItem>

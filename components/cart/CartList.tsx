@@ -26,14 +26,14 @@ export const CartList: FC<Props> = ({editable = false, products}) => {
       {productsToShow.map((product) => (
         <Stack key={product.slug + product.size} direction="row" mb={2} spacing={2}>
           <Box>
-            <NextLink passHref href={`/product/${product.slug}`}>
+            <NextLink passHref href={`${product.slug}`}>
               <Link>
                 <Box>
                   <Image
                     alt={product.title}
                     borderRadius="5px"
                     h={170}
-                    src={`/products/${product.image}`}
+                    src={`${product.image}`}
                     w={170}
                   />
                 </Box>
