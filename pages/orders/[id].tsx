@@ -21,7 +21,7 @@ import {ShopLayout} from "../../components/layouts/ShopLayout";
 import {dbOrders, dbUsers} from "../../database";
 import {IOrder} from "../../interfaces";
 import {countries} from "../../utils";
-import {teslaApi} from "../../api";
+import {teslaApi} from "../../axiosApi";
 import {AuthContext} from "../../context";
 
 export type OrderResponseBody = {

@@ -3,7 +3,7 @@ import axios from "axios";
 import Cookies from "js-cookie";
 import {useSession, signOut} from "next-auth/react";
 
-import {teslaApi} from "../../api";
+import {teslaApi} from "../../axiosApi";
 import {IUser} from "../../interfaces";
 
 import {AuthContext, authReducer} from "./";

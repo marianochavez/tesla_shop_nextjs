@@ -10,7 +10,7 @@ import {getSession} from "next-auth/react";
 import {AdminLayout} from "../../components/layouts";
 import {FullScreenLoading} from "../../components/ui";
 import {IUser} from "../../interfaces";
-import {teslaApi} from "../../api";
+import {teslaApi} from "../../axiosApi";
 import {dbUsers} from "../../database";
 import {AuthContext} from "../../context";
 

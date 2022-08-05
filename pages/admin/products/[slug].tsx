@@ -28,7 +28,7 @@ import {useRouter} from "next/router";
 import {AdminLayout} from "../../../components/layouts";
 import {dbProducts} from "../../../database";
 import {IProduct} from "../../../interfaces";
-import {teslaApi} from "../../../api";
+import {teslaApi} from "../../../axiosApi";
 import {Product} from "../../../models";
 
 const validTypes = ["shirts", "pants", "hoodies", "hats"];

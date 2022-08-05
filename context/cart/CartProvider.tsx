@@ -3,7 +3,7 @@ import Cookies from "js-cookie";
 import axios, {AxiosError} from "axios";
 
 import {ICartProduct, IOrder, IShippingAddress} from "../../interfaces";
-import {teslaApi} from "../../api";
+import {teslaApi} from "../../axiosApi";
 
 import {CartContext, cartReducer} from "./";
 
