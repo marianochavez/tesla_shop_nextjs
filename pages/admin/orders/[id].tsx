@@ -16,6 +16,13 @@ interface Props {
 const OrderPage: NextPage<Props> = ({order}) => {
   const {shippingAddress} = order;
 
+  // format date - time
+  const formatDate = (date: string = "123") => {
+    const formattedDate = new Date(date);
+
+    return formattedDate.toLocaleString("es-ES");
+  };
+
   return (
     <AdminLayout
       icon={<MdOutlineSummarize />}
@@ -60,12 +67,12 @@ const OrderPage: NextPage<Props> = ({order}) => {
 
             <Box display="flex" flexDir="column">
               <Text variant="subtitle1">Orden creada</Text>
-              <Text>{new Date(order.createdAt!).toLocaleString("es-AR")}</Text>
+              <Text>{formatDate(order.createdAt)}</Text>
             </Box>
 
             <Box display="flex" flexDir="column">
               <Text variant="subtitle1">Orden actualizada</Text>
-              <Text>{new Date(order.updatedAt!).toLocaleString("es-AR")}</Text>
+              <Text>{formatDate(order.updatedAt)}</Text>
             </Box>
 
             <Box display="flex" justifyContent="space-between">

@@ -26,7 +26,9 @@ export const ProductCard: FC<Props> = ({product}) => {
                 <Tag
                   backgroundColor="blackAlpha.800"
                   borderRadius="full"
+                  className="fadeIn"
                   color="white"
+                  display={isImageLoaded ? "block" : "none"}
                   fontWeight="semibold"
                   p={2}
                   position="absolute"

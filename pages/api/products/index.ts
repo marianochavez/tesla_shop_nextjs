@@ -32,6 +32,7 @@ const getProducts = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
     .lean();
 
   await db.disconnect();
+
   const updatedProducts: IProduct[] = products.map((product) => {
     // Display image correctly from cloudinary or local
     product.images = product.images.map((image) => {

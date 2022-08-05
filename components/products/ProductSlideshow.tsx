@@ -13,7 +13,7 @@ export const ProductSlideshow: FC<Props> = ({images}) => {
     <>
       <Slide indicators duration={7000} easing="ease">
         {images.map((image) => {
-          const url = `/products/${image}`;
+          const url = `${image}`;
 
           return (
             <div key={image} className={styles["each-slide"]}>

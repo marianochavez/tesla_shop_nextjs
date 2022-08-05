@@ -26,7 +26,7 @@ export const CartList: FC<Props> = ({editable = false, products}) => {
       {productsToShow.map((product) => (
         <Stack key={product.slug + product.size} direction="row" mb={2} spacing={2}>
           <Box>
-            <NextLink passHref href={`${product.slug}`}>
+            <NextLink passHref href={`/product/${product.slug}`}>
               <Link>
                 <Box>
                   <Image

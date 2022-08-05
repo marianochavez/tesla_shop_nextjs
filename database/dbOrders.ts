@@ -16,6 +16,15 @@ export const getOrderById = async (id: string, populate?: boolean): Promise<IOrd
 
   if (!order) return null;
 
+  // Display image correctly from cloudinary or local
+  order.orderItems.map((item) => {
+    item.image = item.image.includes("http")
+      ? item.image
+      : `${process.env.HOST_NAME}/products/${item.image}`;
+
+    return item;
+  });
+
   return JSON.parse(JSON.stringify(order));
 };
 
