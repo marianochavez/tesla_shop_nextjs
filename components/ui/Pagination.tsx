@@ -2,6 +2,7 @@ import {FC} from "react";
 import {Button, HStack, Icon, Text} from "@chakra-ui/react";
 import {GrFormPrevious, GrFormNext} from "react-icons/gr";
 import {BiFirstPage, BiLastPage} from "react-icons/bi";
+import {useEffect} from "react";
 
 interface Props {
   page: number;
@@ -21,8 +22,17 @@ export const Pagination: FC<Props> = ({
   imagesLoaded,
   onClick,
 }) => {
+  useEffect(() => {
+    window.scrollTo({top: 0, left: 0, behavior: "smooth"});
+  }, [page]);
+
   return (
-    <HStack className="fadeIn" display={imagesLoaded ? "flex" : "none"} justifyContent="end" p={6}>
+    <HStack
+      className="fadeIn"
+      display={imagesLoaded ? "flex" : "none"}
+      justifyContent="center"
+      p={6}
+    >
       <Button
         colorScheme="blackAlpha"
         disabled={page === 1}
@@ -40,8 +50,8 @@ export const Pagination: FC<Props> = ({
         <Icon as={GrFormPrevious} fontSize="2xl" />
       </Button>
 
-      <Text>
-        <span style={{fontWeight: "bold"}}>{page} </span>
+      <Text alignItems="center" display="flex" gap={2} justifyContent="center">
+        <span style={{fontWeight: "bold"}}>{page}</span>
         de <span style={{fontWeight: "bold"}}>{totalPages}</span>
       </Text>
 

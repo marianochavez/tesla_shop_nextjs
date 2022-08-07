@@ -154,7 +154,7 @@ export const SideMenu = () => {
                 leftIcon={<BsKey />}
                 size="md"
                 variant="ghost"
-                onClick={() => navigateTo(`/auth/login?p=${router.pathname}`)}
+                onClick={() => navigateTo(`/auth/login?p=${router.asPath}`)}
               >
                 Ingresar
               </Button>
