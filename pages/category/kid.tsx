@@ -1,12 +1,15 @@
+import {useState} from "react";
 import {Text} from "@chakra-ui/react";
 
 import {ShopLayout} from "../../components/layouts";
 import {ProductList} from "../../components/products";
 import {FullScreenLoading} from "../../components/ui";
-import {useProducts} from "../../hooks";
+import {IProductData, useProducts} from "../../hooks";
 
 const KidPage = () => {
-  const {products, isLoading} = useProducts("/products?gender=kid");
+  const [page, setPage] = useState(1);
+  const {data, isLoading} = useProducts(`/products?p=${page}&gender=kid`);
+  const {products, hasNextPage, hasPrevPage, totalPages} = data as IProductData;
 
   return (
     <ShopLayout
@@ -18,7 +21,19 @@ const KidPage = () => {
         Productos para ellos
       </Text>
 
-      {isLoading ? <FullScreenLoading /> : <ProductList products={products} />}
+      {isLoading ? (
+        <FullScreenLoading />
+      ) : (
+        <ProductList
+          hasNextPage={hasNextPage}
+          hasPagination={true}
+          hasPreviousPage={hasPrevPage}
+          page={page}
+          products={products}
+          totalPages={totalPages}
+          onPageChange={setPage}
+        />
+      )}
     </ShopLayout>
   );
 };

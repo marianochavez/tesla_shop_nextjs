@@ -1,14 +1,17 @@
 import type {NextPage} from "next";
 
 import {Text} from "@chakra-ui/react";
+import {useState} from "react";
 
 import {ShopLayout} from "../components/layouts";
 import {ProductList} from "../components/products";
 import {FullScreenLoading} from "../components/ui";
-import {useProducts} from "../hooks";
+import {IProductData, useProducts} from "../hooks";
 
 const HomePage: NextPage = () => {
-  const {products, isLoading} = useProducts("/products");
+  const [page, setPage] = useState(1);
+  const {data, isLoading} = useProducts(`/products?p=${page}`);
+  const {products, hasNextPage, hasPrevPage, totalPages} = data as IProductData;
 
   return (
     <ShopLayout
@@ -20,7 +23,19 @@ const HomePage: NextPage = () => {
         Todos los productos
       </Text>
 
-      {isLoading ? <FullScreenLoading /> : <ProductList products={products} />}
+      {isLoading ? (
+        <FullScreenLoading />
+      ) : (
+        <ProductList
+          hasNextPage={hasNextPage}
+          hasPagination={true}
+          hasPreviousPage={hasPrevPage}
+          page={page}
+          products={products}
+          totalPages={totalPages}
+          onPageChange={setPage}
+        />
+      )}
     </ShopLayout>
   );
 };

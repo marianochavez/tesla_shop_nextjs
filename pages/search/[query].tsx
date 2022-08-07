@@ -23,16 +23,17 @@ const SearchPage: NextPage<Props> = ({products, foundProducts, query}) => {
       <Text variant="h1">Buscar productos</Text>
 
       {foundProducts ? (
-        <Text mb={2} textTransform="capitalize" variant="h2">
-          {`Para "${query}"`}
-        </Text>
+        <>
+          <Text mb={2} textTransform="capitalize" variant="h2">
+            {`Para "${query}"`}
+          </Text>
+          <ProductList hasPagination={false} products={products} />
+        </>
       ) : (
         <Text mb={2} variant="h2">
           {`No se encontraron productos para "${query}"`}
         </Text>
       )}
-
-      <ProductList products={products} />
     </ShopLayout>
   );
 };
@@ -54,9 +55,9 @@ export const getServerSideProps: GetServerSideProps = async ({params}) => {
   let products = await dbProducts.getProductsByTerm(query);
   const foundProducts = products.length > 0;
 
-  if (!foundProducts) {
-    products = await dbProducts.getAllProducts();
-  }
+  // if (!foundProducts) {
+  //   products = await dbProducts.getAllProducts();
+  // }
 
   return {
     props: {

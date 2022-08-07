@@ -6,11 +6,12 @@ import {IProduct} from "../../interfaces";
 
 interface Props {
   product: IProduct;
+  imagesLoaded: boolean;
+  onImageLoaded: (imagesLoaded: boolean) => void;
 }
 
-export const ProductCard: FC<Props> = ({product}) => {
+export const ProductCard: FC<Props> = ({product, imagesLoaded, onImageLoaded}) => {
   const [isHovered, setIsHovered] = useState(false);
-  const [isImageLoaded, setIsImageLoaded] = useState(false);
 
   const productImage = useMemo(() => {
     return isHovered ? `${product.images[1]}` : `${product.images[0]}`;
@@ -28,7 +29,7 @@ export const ProductCard: FC<Props> = ({product}) => {
                   borderRadius="full"
                   className="fadeIn"
                   color="white"
-                  display={isImageLoaded ? "block" : "none"}
+                  display={imagesLoaded ? "block" : "none"}
                   fontWeight="semibold"
                   p={2}
                   position="absolute"
@@ -45,14 +46,14 @@ export const ProductCard: FC<Props> = ({product}) => {
                 className="fadeIn"
                 position="relative"
                 src={productImage}
-                onLoad={() => setIsImageLoaded(true)}
+                onLoad={() => onImageLoaded(true)}
               />
             </Box>
           </Link>
         </NextLink>
       </Box>
 
-      <Box className="fadeIn" display={isImageLoaded ? "block" : "none"} mt={1}>
+      <Box className="fadeIn" display={imagesLoaded ? "block" : "none"} mt={1}>
         <Text fontWeight={700}>{product.title}</Text>
         <Text fontWeight={500}>{`$${product.price}`}</Text>
       </Box>
