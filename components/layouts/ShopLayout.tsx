@@ -30,10 +30,10 @@ export const ShopLayout: FC<Props> = ({children, title, pageDescription, imageFu
       <SideMenu />
       <main
         style={{
-          margin: "20px auto",
+          margin: "80px auto",
           minHeight: "calc(100vh - 100px)",
           maxWidth: "1440px",
-          padding: "0px 30px",
+          padding: "0px 20px",
         }}
       >
         {children}

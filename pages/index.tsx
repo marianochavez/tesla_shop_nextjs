@@ -1,7 +1,8 @@
 import type {NextPage} from "next";
 
-import {Text} from "@chakra-ui/react";
+import {Box, Image} from "@chakra-ui/react";
 import {useState} from "react";
+import {motion} from "framer-motion";
 
 import {ShopLayout} from "../components/layouts";
 import {ProductList} from "../components/products";
@@ -18,13 +19,41 @@ const HomePage: NextPage = () => {
       pageDescription={"Encuentra los mejores productos de Tesla aquí"}
       title={"Tesla Shop | Home"}
     >
-      <Text variant="h1">Tienda</Text>
-      <Text mb={2} variant="h2">
-        Todos los productos
-      </Text>
-
+      <Box
+        alignItems="center"
+        background="black"
+        display="flex"
+        justifyContent="center"
+        m="-20px 0"
+        mb="-50px"
+        ml="50%"
+        overflow="hidden"
+        pb={10}
+        transform="translateX(-50%)"
+        userSelect="none"
+        w="calc(100vw - 15px)"
+      >
+        <Image
+          alt="Model S"
+          animate={{scale: 1.5, opacity: 1}}
+          as={motion.img}
+          draggable={false}
+          initial={{
+            scale: 0.5,
+            opacity: 0,
+          }}
+          maxW={["100%", "100%", "100%", "60%", "40%"]}
+          src={
+            "https://res.cloudinary.com/chavedo/image/upload/v1660059029/tesla-shop/Model-S-Specs-Hero-Desktop-LHD-Res.jpg"
+          }
+          // @ts-ignore
+          transition="2s linear"
+        />
+      </Box>
       {isLoading ? (
-        <FullScreenLoading />
+        <Box pt="30px">
+          <FullScreenLoading />
+        </Box>
       ) : (
         <ProductList
           hasNextPage={hasNextPage}
