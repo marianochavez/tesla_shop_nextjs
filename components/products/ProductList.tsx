@@ -1,24 +1,43 @@
 import {Box, Grid} from "@chakra-ui/react";
 import {FC, useState} from "react";
 
+import {usePagination} from "../../hooks";
 import {IProduct} from "../../interfaces";
 import {Pagination} from "../ui";
 
 import {ProductCard} from "./ProductCard";
 
-interface Props {
+type ProductListProps = {
   products: IProduct[];
-  hasPagination: boolean;
-  hasNextPage?: boolean;
-  hasPreviousPage?: boolean;
-  page?: number;
-  totalPages?: number;
-  onPageChange?: (page: number) => void;
-}
+  hasNextPage: boolean;
+  hasPreviousPage: boolean;
+  page: number;
+  totalPages: number;
+  onPageChange: (page: number) => void;
+};
 
-export const ProductList: FC<Props> = ({
+type ProductListClientProps = {
+  products: IProduct[];
+};
+
+export const ProductListClientPagination: FC<ProductListClientProps> = ({products}) => {
+  const {currentProducts, page, hasNextPage, hasPreviousPage, paginate, totalPages} =
+    usePagination(products);
+
+  return (
+    <ProductList
+      hasNextPage={hasNextPage}
+      hasPreviousPage={hasPreviousPage}
+      page={page}
+      products={currentProducts}
+      totalPages={totalPages}
+      onPageChange={paginate}
+    />
+  );
+};
+
+export const ProductList: FC<ProductListProps> = ({
   products,
-  hasPagination,
   hasNextPage,
   hasPreviousPage,
   onPageChange,
@@ -42,16 +61,14 @@ export const ProductList: FC<Props> = ({
           />
         ))}
       </Grid>
-      {hasPagination && (
-        <Pagination
-          hasNextPage={hasNextPage || false}
-          hasPrevPage={hasPreviousPage || false}
-          imagesLoaded={isImagesLoaded || false}
-          page={page || 1}
-          totalPages={totalPages || 1}
-          onClick={onPageChange || (() => {})}
-        />
-      )}
+      <Pagination
+        hasNextPage={hasNextPage || false}
+        hasPrevPage={hasPreviousPage || false}
+        imagesLoaded={isImagesLoaded || false}
+        page={page || 1}
+        totalPages={totalPages || 1}
+        onClick={onPageChange || (() => {})}
+      />
     </Box>
   );
 };

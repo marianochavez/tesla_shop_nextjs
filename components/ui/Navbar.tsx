@@ -21,6 +21,7 @@ import {FiMenu} from "react-icons/fi";
 import {useRouter} from "next/router";
 import {useContext, useState} from "react";
 import {MdOutlineClear} from "react-icons/md";
+import {motion} from "framer-motion";
 
 import {CartContext, UiContext} from "../../context";
 
@@ -42,15 +43,24 @@ export const Navbar = () => {
       <Stack alignItems="center" direction="row">
         <NextLink passHref href="/">
           <Link>
-            <Stack alignItems="center" direction="row" fontSize="2xl" pr="120px">
-              <Icon as={SiTesla} color="red.700" fontSize="3xl" />
-              <Box display="flex" flexDir="row" fontWeight="bold" pl={4} position="absolute" pt={2}>
-                esla{" "}
-                <Text display={{base: "none", sm: "flex"}} fontWeight="normal" pl={2}>
-                  | Shop
-                </Text>
-              </Box>
-            </Stack>
+            <motion.div whileHover={{scale: 1.1}}>
+              <Stack alignItems="center" direction="row" fontSize="2xl" pr="120px">
+                <Icon as={SiTesla} color="red.700" fontSize="3xl" />
+                <Box
+                  display="flex"
+                  flexDir="row"
+                  fontWeight="bold"
+                  pl={4}
+                  position="absolute"
+                  pt={2}
+                >
+                  esla{" "}
+                  <Text display={{base: "none", sm: "flex"}} fontWeight="normal" pl={2}>
+                    | Shop
+                  </Text>
+                </Box>
+              </Stack>
+            </motion.div>
           </Link>
         </NextLink>
         <Box flex={1} />

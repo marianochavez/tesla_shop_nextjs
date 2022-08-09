@@ -61,7 +61,6 @@ export const SideMenu = () => {
         <DrawerBody>
           <InputGroup>
             <Input
-              autoFocus
               placeholder="Buscar..."
               type="text"
               value={searchTerm}

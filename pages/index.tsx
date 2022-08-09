@@ -28,7 +28,6 @@ const HomePage: NextPage = () => {
       ) : (
         <ProductList
           hasNextPage={hasNextPage}
-          hasPagination={true}
           hasPreviousPage={hasPrevPage}
           page={page}
           products={products}

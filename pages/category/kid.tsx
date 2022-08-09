@@ -26,7 +26,6 @@ const KidPage = () => {
       ) : (
         <ProductList
           hasNextPage={hasNextPage}
-          hasPagination={true}
           hasPreviousPage={hasPrevPage}
           page={page}
           products={products}

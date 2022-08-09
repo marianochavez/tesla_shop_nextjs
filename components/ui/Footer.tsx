@@ -52,6 +52,7 @@ export const Footer = () => {
       bg={useColorModeValue("blackAlpha.900", "gray.900")}
       color={useColorModeValue("white", "gray.200")}
       mt={10}
+      pt={8}
     >
       <Container align={"center"} as={Stack} justify={"center"} maxW={"6xl"} py={4} spacing={4}>
         <Stack alignItems="center" direction="row" fontSize="2xl" ml="-10">
@@ -60,7 +61,7 @@ export const Footer = () => {
             esla{" "}
           </Box>
         </Stack>
-        <Stack direction={"row"} spacing={6}>
+        <Stack direction={"row"} fontWeight="bold" spacing={6}>
           <NextLink passHref href="/">
             <Link>Inicio</Link>
           </NextLink>
@@ -77,9 +78,9 @@ export const Footer = () => {
       </Container>
 
       <Box
-        borderColor={useColorModeValue("gray.200", "gray.700")}
-        borderStyle={"solid"}
-        borderTopWidth={1}
+      // borderColor={useColorModeValue("gray.200", "gray.700")}
+      // borderStyle={"solid"}
+      // borderTopWidth={1}
       >
         <Container
           align={{base: "center", md: "center"}}

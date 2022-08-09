@@ -4,7 +4,7 @@ import {GetServerSideProps} from "next";
 import {Text} from "@chakra-ui/react";
 
 import {ShopLayout} from "../../components/layouts";
-import {ProductList} from "../../components/products";
+import {ProductListClientPagination} from "../../components/products";
 import {dbProducts} from "../../database";
 import {IProduct} from "../../interfaces/products";
 
@@ -27,7 +27,8 @@ const SearchPage: NextPage<Props> = ({products, foundProducts, query}) => {
           <Text mb={2} textTransform="capitalize" variant="h2">
             {`Para "${query}"`}
           </Text>
-          <ProductList hasPagination={false} products={products} />
+          {/* <ProductList hasPagination={false} products={products} /> */}
+          <ProductListClientPagination products={products} />
         </>
       ) : (
         <Text mb={2} variant="h2">
