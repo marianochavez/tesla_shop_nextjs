@@ -4,6 +4,16 @@ import {User} from "../models";
 
 import {db} from ".";
 
+export const getUserProfile = async (id: string = "") => {
+  await db.connect();
+  const user = await User.findById(id).select("name email -_id").lean();
+
+  await db.disconnect();
+  if (!user) return null;
+
+  return user;
+};
+
 export const checkUserById = async (id: string = "") => {
   await db.connect();
   const user = await User.findById(id).lean();

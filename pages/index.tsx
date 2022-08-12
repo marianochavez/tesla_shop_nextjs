@@ -1,6 +1,6 @@
 import type {NextPage} from "next";
 
-import {Box, Image} from "@chakra-ui/react";
+import {Box, Text} from "@chakra-ui/react";
 import {useState} from "react";
 import {motion} from "framer-motion";
 
@@ -19,36 +19,29 @@ const HomePage: NextPage = () => {
       pageDescription={"Encuentra los mejores productos de Tesla aquí"}
       title={"Tesla Shop | Home"}
     >
-      <Box
-        alignItems="center"
-        background="black"
-        display="flex"
-        justifyContent="center"
-        m="-20px 0"
-        mb="-50px"
-        ml="50%"
-        overflow="hidden"
-        pb={10}
-        transform="translateX(-50%)"
-        userSelect="none"
-        w="calc(100vw - 15px)"
-      >
-        <Image
-          alt="Model S"
-          animate={{scale: 1.5, opacity: 1}}
-          as={motion.img}
+      <Box className="back-image">
+        <motion.img
+          animate={{scale: 1, opacity: 1}}
           draggable={false}
-          initial={{
-            scale: 0.5,
-            opacity: 0,
-          }}
-          maxW={["100%", "100%", "100%", "60%", "40%"]}
-          src={
-            "https://res.cloudinary.com/chavedo/image/upload/v1660059029/tesla-shop/Model-S-Specs-Hero-Desktop-LHD-Res.jpg"
-          }
-          // @ts-ignore
-          transition="2s linear"
+          initial={{scale: 1.2, opacity: 0}}
+          src="https://res.cloudinary.com/chavedo/image/upload/v1660237607/tesla-shop/spaceX.webp"
+          // @ts-ignore - This is a valid motion prop
+          transition={{duration: 1}}
         />
+
+        <Text
+          animate={{opacity: 1, y: 0}}
+          as={motion.p}
+          color="white"
+          fontFamily="mono"
+          fontSize={["2xl", "2xl", "2xl", "4xl", "6xl"]}
+          fontWeight="bold"
+          initial={{opacity: 0, y: 100}}
+          position="absolute"
+          transition="1s linear"
+        >
+          TESLA SHOP
+        </Text>
       </Box>
       {isLoading ? (
         <Box pt="30px">

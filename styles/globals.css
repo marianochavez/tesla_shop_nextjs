@@ -38,3 +38,15 @@
   padding: 5px;
   border-bottom: 1px solid rgba(0, 0, 0, 0.1);
 }
+
+.back-image{
+  background-color: black;
+  margin: -20px -20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: auto;
+  padding-bottom: 20px;
+  overflow: hidden;
+  user-select: none;
+}

@@ -39,3 +39,34 @@ export const getOrdersByUser = async (userId: string): Promise<IOrder[]> => {
 
   return JSON.parse(JSON.stringify(orders));
 };
+
+export const getOrdersStatsByUser = async (userId: string) => {
+  if (!isValidObjectId(userId)) return {};
+
+  await db.connect();
+
+  const orders = await Order.find({user: userId}).lean();
+
+  await db.disconnect();
+
+  const stats = {
+    totalProductsPurchased: 0,
+    totalPaid: 0,
+    paidOrders: 0,
+    unpaidOrders: 0,
+  };
+
+  orders.map((order) => {
+    if (order.isPaid) {
+      stats.paidOrders++;
+      stats.totalPaid += order.total;
+      stats.totalProductsPurchased += order.numberOfItems;
+    } else {
+      stats.unpaidOrders++;
+    }
+
+    return order;
+  }).length;
+
+  return stats;
+};

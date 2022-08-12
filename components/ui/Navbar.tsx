@@ -113,7 +113,7 @@ export const Navbar = () => {
             <NextLink passHref href="/category/men">
               <Link>
                 <Button
-                  _hover={{backgroundColor: "red.100"}}
+                  _hover={{color: "red.700"}}
                   color={pathname === "/category/men" ? "red.700" : "secondary"}
                   variant="ghost"
                 >
@@ -125,7 +125,7 @@ export const Navbar = () => {
             <NextLink passHref href="/category/women">
               <Link>
                 <Button
-                  _hover={{backgroundColor: "red.100"}}
+                  _hover={{color: "red.700"}}
                   color={pathname === "/category/women" ? "red.700" : "secondary"}
                   variant="ghost"
                 >
@@ -137,7 +137,7 @@ export const Navbar = () => {
             <NextLink passHref href="/category/kid">
               <Link>
                 <Button
-                  _hover={{backgroundColor: "red.100"}}
+                  _hover={{color: "red.700"}}
                   color={pathname === "/category/kid" ? "red.700" : "secondary"}
                   variant="ghost"
                 >

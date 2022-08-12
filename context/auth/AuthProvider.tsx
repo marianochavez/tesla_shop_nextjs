@@ -79,6 +79,39 @@ export const AuthProvider: FC<Props> = ({children}) => {
     }
   };
 
+  const updateUser = async (
+    name: string,
+    email: string,
+    oldPassword: string,
+    newPassword: string,
+  ): Promise<{hasError: boolean; message?: string}> => {
+    try {
+      const {data} = await teslaApi.put("/user/update", {name, email, oldPassword, newPassword});
+      const {token, user} = data;
+
+      Cookies.set("token", token);
+      dispatch({type: "Auth - Login", payload: user});
+
+      return {
+        hasError: false,
+      };
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        const err = error as any;
+
+        return {
+          hasError: true,
+          message: err.response?.data.message,
+        };
+      }
+
+      return {
+        hasError: true,
+        message: "Error al actualizar usuario",
+      };
+    }
+  };
+
   const logoutUser = async () => {
     Cookies.remove("cart");
     Cookies.remove("name");
@@ -103,6 +136,7 @@ export const AuthProvider: FC<Props> = ({children}) => {
         // methods
         loginUser,
         registerUser,
+        updateUser,
         logoutUser,
       }}
     >

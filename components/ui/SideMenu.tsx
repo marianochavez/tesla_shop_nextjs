@@ -87,6 +87,7 @@ export const SideMenu = () => {
                   leftIcon={<AiOutlineUser />}
                   size="md"
                   variant="ghost"
+                  onClick={() => navigateTo("/user/profile")}
                 >
                   Perfil
                 </Button>

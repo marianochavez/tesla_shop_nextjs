@@ -16,6 +16,15 @@ interface ContextProps {
     hasError: boolean;
     message?: string;
   }>;
+  updateUser: (
+    name: string,
+    email: string,
+    oldPassword: string,
+    newPassword: string,
+  ) => Promise<{
+    hasError: boolean;
+    message?: string;
+  }>;
   logoutUser: () => void;
 }
 

@@ -50,6 +50,7 @@ export const ProductList: FC<ProductListProps> = ({
     <Box>
       <Grid
         gap={6}
+        justifyContent="center"
         templateColumns={{sm: "repeat(2, 1fr)", md: "repeat(2, 1fr)", lg: "repeat(3, 1fr)"}}
       >
         {products.map((product) => (
