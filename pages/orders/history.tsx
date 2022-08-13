@@ -14,7 +14,7 @@ import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-alpine.css";
 
 const defaultColDef = {
-  width: 200,
+  width: 80,
   filter: true,
   sortable: true,
   resizable: true,
@@ -30,11 +30,25 @@ const columns: any = [
     minWidth: 200,
     cellRenderer: ({data}: any) => {
       return data.paid ? (
-        <Tag borderRadius="15px" colorScheme="green" p={2} variant="outline">
+        <Tag
+          borderRadius="15px"
+          colorScheme="green"
+          justifyContent="center"
+          minW="85px"
+          p={2}
+          variant="outline"
+        >
           Pagada
         </Tag>
       ) : (
-        <Tag borderRadius="15px" colorScheme="red" p={2} variant="outline">
+        <Tag
+          borderRadius="15px"
+          colorScheme="red"
+          justifyContent="center"
+          minW="85px"
+          p={2}
+          variant="outline"
+        >
           No pagada
         </Tag>
       );
@@ -43,7 +57,8 @@ const columns: any = [
   {
     field: "orden",
     headerName: "Ver orden",
-
+    flex: 1,
+    minWidth: 150,
     cellRenderer: ({data}: any) => {
       return (
         <NextLink passHref href={`/orders/${data.orderId}`}>

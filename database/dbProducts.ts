@@ -10,7 +10,7 @@ interface ProductSlug {
 export const getAllProducts = async (): Promise<IProduct[]> => {
   await db.connect();
 
-  const products = await Product.find().lean();
+  const products = await Product.find().select("title images price inStock slug -_id").lean();
 
   await db.disconnect();
   const updatedProducts = products.map((product) => {
@@ -22,7 +22,27 @@ export const getAllProducts = async (): Promise<IProduct[]> => {
     return product;
   });
 
-  return JSON.parse(JSON.stringify(updatedProducts));
+  return updatedProducts;
+};
+
+export const getAllProductsByCategory = async (gender: string): Promise<IProduct[]> => {
+  await db.connect();
+
+  const products = await Product.find({gender})
+    .select("title images price inStock slug -_id")
+    .lean();
+
+  await db.disconnect();
+  const updatedProducts = products.map((product) => {
+    // Display image correctly from cloudinary or local
+    product.images = product.images.map((image) => {
+      return image.includes("http") ? image : `${process.env.HOST_NAME}/products/${image}`;
+    });
+
+    return product;
+  });
+
+  return updatedProducts;
 };
 
 export const getProductBySlug = async (slug: string): Promise<IProduct | null> => {

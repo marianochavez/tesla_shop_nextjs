@@ -105,7 +105,7 @@ const RegisterPage = () => {
           <GridItem>
             <FormControl isInvalid={!!errors.email}>
               <FormLabel fontWeight="bold" htmlFor="email">
-                Email
+                Correo
               </FormLabel>
               <Input
                 backgroundColor="whiteAlpha.800"

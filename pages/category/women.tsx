@@ -1,15 +1,20 @@
-import {useState} from "react";
 import {Text} from "@chakra-ui/react";
+import {GetStaticProps, NextPage} from "next";
 
 import {ShopLayout} from "../../components/layouts";
-import {ProductList} from "../../components/products";
-import {FullScreenLoading} from "../../components/ui";
-import {IProductData, useProducts} from "../../hooks";
+import {ProductListClientPagination} from "../../components/products";
+import {dbProducts} from "../../database";
+import {IProduct} from "../../interfaces";
 
-const WomenPage = () => {
-  const [page, setPage] = useState(1);
-  const {data, isLoading} = useProducts(`/products?p=${page}&gender=women`);
-  const {products, hasNextPage, hasPrevPage, totalPages} = data as IProductData;
+interface Props {
+  products: IProduct[];
+}
+
+const WomenPage: NextPage<Props> = ({products}) => {
+  // * server side method
+  // const [page, setPage] = useState(1);
+  // const {data, isLoading} = useProducts(`/products?p=${page}&gender=women`);
+  // const {products, hasNextPage, hasPrevPage, totalPages} = data as IProductData;
 
   return (
     <ShopLayout
@@ -21,7 +26,10 @@ const WomenPage = () => {
         Productos para ellas
       </Text>
 
-      {isLoading ? (
+      <ProductListClientPagination products={products} />
+
+      {/* Server side method */}
+      {/* {isLoading ? (
         <FullScreenLoading />
       ) : (
         <ProductList
@@ -32,9 +40,20 @@ const WomenPage = () => {
           totalPages={totalPages}
           onPageChange={setPage}
         />
-      )}
+      )} */}
     </ShopLayout>
   );
 };
 
 export default WomenPage;
+
+export const getStaticProps: GetStaticProps = async () => {
+  const products = await dbProducts.getAllProductsByCategory("women");
+
+  return {
+    props: {
+      products,
+    },
+    revalidate: 86400, // 1 day
+  };
+};

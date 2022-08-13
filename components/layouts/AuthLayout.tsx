@@ -1,4 +1,4 @@
-import {Box, Icon} from "@chakra-ui/react";
+import {Box, Icon, Link, VisuallyHidden} from "@chakra-ui/react";
 import {motion} from "framer-motion";
 import Head from "next/head";
 import {FC, ReactNode} from "react";
@@ -29,10 +29,13 @@ export const AuthLayout: FC<Props> = ({children, title}) => {
             justifyContent: "center",
             alignItems: "center",
           }}
-          transition={{repeat: Infinity, repeatType: "reverse", duration: 3, ease: "easeInOut"}}
+          transition={{repeat: Infinity, repeatType: "reverse", duration: 2, ease: "easeInOut"}}
         >
           <NextLink passHref href="/">
-            <Icon as={SiTesla} color="red.700" fontSize="6xl" />
+            <Link>
+              <Icon as={SiTesla} color="red.700" fontSize="6xl" />
+              <VisuallyHidden>Inicio</VisuallyHidden>
+            </Link>
           </NextLink>
         </motion.div>
         <Box

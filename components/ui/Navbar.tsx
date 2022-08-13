@@ -4,14 +4,15 @@ import {
   Box,
   Button,
   Container,
-  Hide,
   Icon,
   Input,
   InputGroup,
   InputRightElement,
   Link,
+  Show,
   Stack,
   Text,
+  VisuallyHidden,
 } from "@chakra-ui/react";
 import NextLink from "next/link";
 import {SiTesla} from "react-icons/si";
@@ -54,16 +55,22 @@ const useScrollNav = () => {
 };
 
 export const Navbar = () => {
+  const {asPath, pathname, push} = useRouter();
   const {toggleSideMenu} = useContext(UiContext);
-  const {pathname, push} = useRouter();
   const {numberOfItems} = useContext(CartContext);
   const {bg, color} = useScrollNav();
 
   const [searchTerm, setSearchTerm] = useState("");
   const [isSearchVisible, setIsSearchVisible] = useState(false);
+  const [isSearching, setisSearching] = useState(false);
+
+  useEffect(() => {
+    setisSearching(false);
+  }, [asPath]);
 
   const onSearchTerm = () => {
     if (searchTerm.trim().length === 0) return;
+    setisSearching(true);
     push(`/search/${searchTerm}`);
   };
 
@@ -103,7 +110,7 @@ export const Navbar = () => {
           </Link>
         </NextLink>
         <Box flex={1} />
-        <Hide below="md">
+        <Show above="md">
           <Stack
             alignItems="center"
             className="fadeIn"
@@ -146,11 +153,11 @@ export const Navbar = () => {
               </Link>
             </NextLink>
           </Stack>
-        </Hide>
+        </Show>
         <Box flex={1} />
         <Stack alignItems="center" direction="row" display="flex" justifyContent="end" m="0">
           {/* -- desktop -- */}
-          <Hide below="md">
+          <Show above="md">
             {isSearchVisible ? (
               <motion.div
                 layout
@@ -161,6 +168,7 @@ export const Navbar = () => {
                 <InputGroup className="fadeIn" size="sm">
                   <Input
                     autoFocus
+                    focusBorderColor="red.700"
                     placeholder="Buscar..."
                     type="text"
                     value={searchTerm}
@@ -173,8 +181,14 @@ export const Navbar = () => {
                     }}
                   />
                   <InputRightElement>
-                    <Button variant="link" onClick={() => setIsSearchVisible(false)}>
+                    <Button
+                      color="white"
+                      isLoading={isSearching}
+                      variant="link"
+                      onClick={() => setIsSearchVisible(false)}
+                    >
                       <Icon as={MdOutlineClear} />
+                      <VisuallyHidden>Cerrar</VisuallyHidden>
                     </Button>
                   </InputRightElement>
                 </InputGroup>
@@ -190,9 +204,10 @@ export const Navbar = () => {
                 onClick={() => setIsSearchVisible(true)}
               >
                 <Icon as={AiOutlineSearch} />
+                <VisuallyHidden>Buscar</VisuallyHidden>
               </Button>
             )}
-          </Hide>
+          </Show>
           {/* -- mobile -- */}
           <Button
             _hover={{color: "red.700"}}
@@ -203,6 +218,7 @@ export const Navbar = () => {
             onClick={toggleSideMenu}
           >
             <AiOutlineSearch />
+            <VisuallyHidden>Buscar</VisuallyHidden>
           </Button>
           {/* --- */}
           <NextLink passHref href="/cart">
@@ -234,6 +250,7 @@ export const Navbar = () => {
               Menu
             </Text>
             <Icon as={FiMenu} display={{base: "flex", md: "none"}} />
+            <VisuallyHidden>Menu</VisuallyHidden>
           </Button>
         </Stack>
       </Stack>

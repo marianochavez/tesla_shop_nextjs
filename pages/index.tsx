@@ -1,18 +1,23 @@
 import type {NextPage} from "next";
 
+import {GetStaticProps} from "next";
 import {Box, Text} from "@chakra-ui/react";
-import {useState} from "react";
 import {motion} from "framer-motion";
 
 import {ShopLayout} from "../components/layouts";
-import {ProductList} from "../components/products";
-import {FullScreenLoading} from "../components/ui";
-import {IProductData, useProducts} from "../hooks";
+import {ProductListClientPagination} from "../components/products";
+import {dbProducts} from "../database";
+import {IProduct} from "../interfaces";
 
-const HomePage: NextPage = () => {
-  const [page, setPage] = useState(1);
-  const {data, isLoading} = useProducts(`/products?p=${page}`);
-  const {products, hasNextPage, hasPrevPage, totalPages} = data as IProductData;
+interface Props {
+  products: IProduct[];
+}
+
+const HomePage: NextPage<Props> = ({products}) => {
+  // * server side method
+  // const [page, setPage] = useState(1);
+  // const {data, isLoading} = useProducts(`/products?p=${page}`);
+  // const {products, hasNextPage, hasPrevPage, totalPages} = data as IProductData;
 
   return (
     <ShopLayout
@@ -21,6 +26,7 @@ const HomePage: NextPage = () => {
     >
       <Box className="back-image">
         <motion.img
+          alt="Tesla shop"
           animate={{scale: 1, opacity: 1}}
           draggable={false}
           initial={{scale: 1.2, opacity: 0}}
@@ -36,14 +42,17 @@ const HomePage: NextPage = () => {
           fontFamily="mono"
           fontSize={["2xl", "2xl", "2xl", "4xl", "6xl"]}
           fontWeight="bold"
-          initial={{opacity: 0, y: 100}}
+          initial={{opacity: 0, y: -100}}
           position="absolute"
           transition="1s linear"
         >
           TESLA SHOP
         </Text>
       </Box>
-      {isLoading ? (
+      <ProductListClientPagination products={products} />
+
+      {/* Server side method */}
+      {/* {isLoading ? (
         <Box pt="30px">
           <FullScreenLoading />
         </Box>
@@ -56,9 +65,20 @@ const HomePage: NextPage = () => {
           totalPages={totalPages}
           onPageChange={setPage}
         />
-      )}
+      )} */}
     </ShopLayout>
   );
 };
 
 export default HomePage;
+
+export const getStaticProps: GetStaticProps = async () => {
+  const products = await dbProducts.getAllProducts();
+
+  return {
+    props: {
+      products,
+    },
+    revalidate: 86400, // 1 day
+  };
+};

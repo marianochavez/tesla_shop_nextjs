@@ -106,31 +106,6 @@ const ProductPage: NextPage<Props> = ({product}) => {
   );
 };
 
-// You should use getServerSideProps when:
-// - Only if you need to pre-render a page whose data must be fetched at request time
-// ! No usar... SSR
-// export const getServerSideProps: GetServerSideProps = async ({params}) => {
-//   const {slug = ""} = params as {slug: string};
-//   const product = await dbProducts.getProductBySlug(slug);
-
-//   if (!product) {
-//     return {
-//       redirect: {
-//         destination: "/",
-//         permanent: false,
-//       },
-//     };
-//   }
-
-//   return {
-//     props: {
-//       product,
-//     },
-//   };
-// };
-
-// You should use getStaticPaths if you’re statically pre-rendering pages that use dynamic routes
-
 export const getStaticPaths: GetStaticPaths = async () => {
   const productsSlugs = await dbProducts.getAllProductSlugs();
 

@@ -15,7 +15,7 @@ import {
   InputRightElement,
   InputGroup,
   Divider,
-  Hide,
+  Show,
 } from "@chakra-ui/react";
 import {GetServerSideProps, NextPage} from "next";
 import {getSession, signIn} from "next-auth/react";
@@ -187,10 +187,10 @@ const UserProfile: NextPage<Props> = ({user, ordersStats}) => {
             </Grid>
           </form>
         </Box>
-        <Hide above="md">
+        <Show below="md">
           <Divider />
           <Text variant="h2">Resumen</Text>
-        </Hide>
+        </Show>
         <SimpleGrid columns={[1, 2, 2]} gap={3}>
           <SummaryTitle
             icon={<Icon as={MdAttachMoney} color="green.600" fontSize={50} />}

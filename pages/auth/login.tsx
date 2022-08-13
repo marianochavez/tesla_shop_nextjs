@@ -159,30 +159,26 @@ const LoginPage = () => {
 
           <GridItem>
             <Divider borderColor="white" mb={2} mt={2} />
-            {providers.google && (
-              <Button
-                colorScheme="white"
-                leftIcon={<Icon as={FcGoogle} />}
-                mt={2}
-                variant="outline"
-                w="100%"
-                onClick={() => signIn(providers.google.id)}
-              >
-                {providers.google.name}
-              </Button>
-            )}
-            {providers.github && (
-              <Button
-                colorScheme="white"
-                leftIcon={<Icon as={BsGithub} fontSize="lg" />}
-                mt={3}
-                variant="outline"
-                w="100%"
-                onClick={() => signIn(providers.github.id)}
-              >
-                {providers.github.name}
-              </Button>
-            )}
+            <Button
+              colorScheme="white"
+              leftIcon={<Icon as={FcGoogle} />}
+              mt={2}
+              variant="outline"
+              w="100%"
+              onClick={() => signIn(providers.google.id)}
+            >
+              Google
+            </Button>
+            <Button
+              colorScheme="white"
+              leftIcon={<Icon as={BsGithub} fontSize="lg" />}
+              mt={3}
+              variant="outline"
+              w="100%"
+              onClick={() => signIn(providers.github.id)}
+            >
+              GitHub
+            </Button>
           </GridItem>
         </Grid>
       </form>

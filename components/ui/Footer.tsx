@@ -9,7 +9,7 @@ import {
   useColorModeValue,
   VisuallyHidden,
 } from "@chakra-ui/react";
-import {FaInstagram, FaTwitter, FaYoutube} from "react-icons/fa";
+import {FaGithub, FaLinkedin, FaTwitter} from "react-icons/fa";
 import {ReactNode} from "react";
 import {SiTesla} from "react-icons/si";
 import NextLink from "next/link";
@@ -18,10 +18,12 @@ const SocialButton = ({
   children,
   label,
   href,
+  target = "_blank",
 }: {
   children: ReactNode;
   label: string;
   href: string;
+  target?: string;
 }) => {
   return (
     <chakra.button
@@ -37,6 +39,7 @@ const SocialButton = ({
       href={href}
       justifyContent={"center"}
       rounded={"full"}
+      target={target}
       transition={"background 0.3s ease"}
       w={8}
     >
@@ -78,9 +81,9 @@ export const Footer = () => {
       </Container>
 
       <Box
-      // borderColor={useColorModeValue("gray.200", "gray.700")}
-      // borderStyle={"solid"}
-      // borderTopWidth={1}
+        borderColor={useColorModeValue("red.700", "red.700")}
+        borderStyle={"solid"}
+        borderTopWidth={1}
       >
         <Container
           align={{base: "center", md: "center"}}
@@ -91,16 +94,19 @@ export const Footer = () => {
           py={4}
           spacing={4}
         >
-          <Text>© 2022 Tesla Shop. Educational page.</Text>
+          <Text>Made by Mariano. Educational purpose.</Text>
           <Stack direction={"row"} spacing={6}>
+            <SocialButton
+              href={"https://github.com/marianochavez/tesla_shop_nextjs"}
+              label={"GitHub"}
+            >
+              <FaGithub />
+            </SocialButton>
+            <SocialButton href={"https://www.linkedin.com/in/mariano-chavez"} label={"Linkedin"}>
+              <FaLinkedin />
+            </SocialButton>
             <SocialButton href={"#"} label={"Twitter"}>
               <FaTwitter />
-            </SocialButton>
-            <SocialButton href={"#"} label={"YouTube"}>
-              <FaYoutube />
-            </SocialButton>
-            <SocialButton href={"#"} label={"Instagram"}>
-              <FaInstagram />
             </SocialButton>
           </Stack>
         </Container>

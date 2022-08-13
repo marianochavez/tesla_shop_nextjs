@@ -1,5 +1,5 @@
 import {FC} from "react";
-import {Button, HStack, Icon, Text} from "@chakra-ui/react";
+import {Button, HStack, Icon, Text, VisuallyHidden} from "@chakra-ui/react";
 import {GrFormPrevious, GrFormNext} from "react-icons/gr";
 import {BiFirstPage, BiLastPage} from "react-icons/bi";
 import {useEffect} from "react";
@@ -28,7 +28,7 @@ export const Pagination: FC<Props> = ({
 
   return (
     <HStack
-      className="fadeIn"
+      // className="fadeIn"
       display={imagesLoaded ? "flex" : "none"}
       justifyContent="center"
       p={6}
@@ -40,6 +40,7 @@ export const Pagination: FC<Props> = ({
         onClick={() => onClick(1)}
       >
         <Icon as={BiFirstPage} color="black" fontSize="2xl" />
+        <VisuallyHidden>Primera pagina</VisuallyHidden>
       </Button>
       <Button
         colorScheme="blackAlpha"
@@ -48,6 +49,7 @@ export const Pagination: FC<Props> = ({
         onClick={() => onClick(page - 1)}
       >
         <Icon as={GrFormPrevious} fontSize="2xl" />
+        <VisuallyHidden>Pagina anterior</VisuallyHidden>
       </Button>
 
       <Text alignItems="center" display="flex" gap={2} justifyContent="center">
@@ -62,6 +64,7 @@ export const Pagination: FC<Props> = ({
         onClick={() => onClick(page + 1)}
       >
         <Icon as={GrFormNext} fontSize="2xl" />
+        <VisuallyHidden>Pagina siguiente</VisuallyHidden>
       </Button>
       <Button
         colorScheme="blackAlpha"
@@ -70,6 +73,7 @@ export const Pagination: FC<Props> = ({
         onClick={() => onClick(totalPages)}
       >
         <Icon as={BiLastPage} color="black" fontSize="2xl" />
+        <VisuallyHidden>Ultima pagina</VisuallyHidden>
       </Button>
     </HStack>
   );

@@ -24,7 +24,6 @@ export const ProductCard: FC<Props> = ({product, imagesLoaded, onImageLoaded}) =
       as={motion.div}
       initial={{opacity: 0}}
       maxW={{base: "xs", md: "lg"}}
-      transition="0.2s linear"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
@@ -37,7 +36,6 @@ export const ProductCard: FC<Props> = ({product, imagesLoaded, onImageLoaded}) =
                 borderRadius="full"
                 className="fadeIn"
                 color="white"
-                display={imagesLoaded ? "block" : "none"}
                 fontWeight="semibold"
                 p={2}
                 position="absolute"
@@ -50,11 +48,16 @@ export const ProductCard: FC<Props> = ({product, imagesLoaded, onImageLoaded}) =
             )}
             <Image
               alt={product.title}
+              as={motion.img}
               borderRadius="10px"
               className="fadeIn"
+              height="calc(100% - 20px)"
               position="relative"
               src={productImage}
-              onLoad={() => onImageLoaded(true)}
+              // @ts-ignore
+              whileInView={() => onImageLoaded(true)}
+              width="100%"
+              // onLoad={() => onImageLoaded(true)}
             />
           </Box>
         </Link>
