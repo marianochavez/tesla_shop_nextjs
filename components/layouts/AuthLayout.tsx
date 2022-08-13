@@ -1,6 +1,9 @@
-import {Box} from "@chakra-ui/react";
+import {Box, Icon} from "@chakra-ui/react";
+import {motion} from "framer-motion";
 import Head from "next/head";
 import {FC, ReactNode} from "react";
+import {SiTesla} from "react-icons/si";
+import NextLink from "next/link";
 
 interface Props {
   children: ReactNode;
@@ -15,10 +18,29 @@ export const AuthLayout: FC<Props> = ({children, title}) => {
       </Head>
 
       <main>
+        <motion.div
+          animate={{opacity: 1}}
+          initial={{opacity: 0}}
+          style={{
+            position: "absolute",
+            width: "100%",
+            paddingTop: "20px",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+          transition={{repeat: Infinity, repeatType: "reverse", duration: 3, ease: "easeInOut"}}
+        >
+          <NextLink passHref href="/">
+            <Icon as={SiTesla} color="red.700" fontSize="6xl" />
+          </NextLink>
+        </motion.div>
         <Box
           alignItems="center"
+          backgroundColor="black"
+          color="white"
           display="flex"
-          height="calc(100vh - 200px)"
+          height="100vh"
           justifyContent="center"
         >
           {children}

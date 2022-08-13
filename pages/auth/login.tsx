@@ -5,7 +5,6 @@ import {
   Grid,
   GridItem,
   Input,
-  Text,
   Link,
   FormErrorMessage,
   Tag,
@@ -38,7 +37,7 @@ const LoginPage = () => {
     formState: {errors},
   } = useForm<FormData>();
   const [showError, setShowError] = useState(false);
-
+  const [isLoading, setisLoading] = useState(false);
   const [providers, setProviders] = useState<any>({});
 
   useEffect(() => {
@@ -57,6 +56,7 @@ const LoginPage = () => {
 
   const onLoginUser = async ({email, password}: FormData) => {
     setShowError(false);
+    setisLoading(true);
 
     // OLD WAY
     // const isValidLogin = await loginUser(email, password);
@@ -73,14 +73,21 @@ const LoginPage = () => {
 
     // router.replace(destination);
     await signIn("credentials", {email, password});
+    setisLoading(false);
   };
 
   return (
     <AuthLayout title="Ingresar">
       <form noValidate onSubmit={handleSubmit(onLoginUser)}>
-        <Grid gap={2} p="10px 20px" w={350}>
+        <Grid
+          backgroundColor="whiteAlpha.200"
+          borderRadius="20px"
+          className="fadeIn"
+          gap={2}
+          p="30px 30px"
+          w={350}
+        >
           <GridItem>
-            <Text variant="h1">Iniciar sesión</Text>
             <Tag colorScheme="red" display={showError ? "flex" : "none"} p={3} w="100%">
               <Icon as={BiErrorCircle} fontSize="lg" mr={1} />
               Email o contraseña incorrectos
@@ -89,8 +96,12 @@ const LoginPage = () => {
 
           <GridItem>
             <FormControl isInvalid={!!errors.email}>
-              <FormLabel htmlFor="email">Email</FormLabel>
+              <FormLabel fontWeight="bold" htmlFor="email">
+                Correo
+              </FormLabel>
               <Input
+                backgroundColor="whiteAlpha.800"
+                color="black"
                 id="email"
                 type="email"
                 {...register("email", {
@@ -104,8 +115,12 @@ const LoginPage = () => {
 
           <GridItem>
             <FormControl isInvalid={!!errors.password}>
-              <FormLabel htmlFor="password">Contraseña</FormLabel>
+              <FormLabel fontWeight="bold" htmlFor="password">
+                Contraseña
+              </FormLabel>
               <Input
+                backgroundColor="whiteAlpha.800"
+                color="black"
                 id="password"
                 type="password"
                 {...register("password", {
@@ -121,7 +136,14 @@ const LoginPage = () => {
           </GridItem>
 
           <GridItem>
-            <Button colorScheme="yellow" size="lg" type="submit" w="100%">
+            <Button
+              colorScheme="yellow"
+              disabled={isLoading}
+              isLoading={isLoading}
+              size="lg"
+              type="submit"
+              w="100%"
+            >
               Ingresar
             </Button>
           </GridItem>
@@ -136,10 +158,10 @@ const LoginPage = () => {
           </GridItem>
 
           <GridItem>
-            <Divider borderColor="blackAlpha.400" mb={2} mt={2} />
+            <Divider borderColor="white" mb={2} mt={2} />
             {providers.google && (
               <Button
-                colorScheme="blue"
+                colorScheme="white"
                 leftIcon={<Icon as={FcGoogle} />}
                 mt={2}
                 variant="outline"
@@ -151,7 +173,7 @@ const LoginPage = () => {
             )}
             {providers.github && (
               <Button
-                colorScheme="blackAlpha"
+                colorScheme="white"
                 leftIcon={<Icon as={BsGithub} fontSize="lg" />}
                 mt={3}
                 variant="outline"

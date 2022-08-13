@@ -209,7 +209,7 @@ const UserProfile: NextPage<Props> = ({user, ordersStats}) => {
           />
           <SummaryTitle
             icon={<Icon as={MdOutlineSummarize} color="red.600" fontSize={50} />}
-            subTitle="Ordenes Pagadas"
+            subTitle="Ordenes Sin Pagar"
             title={ordersStats.unpaidOrders}
           />
         </SimpleGrid>

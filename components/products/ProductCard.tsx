@@ -33,7 +33,7 @@ export const ProductCard: FC<Props> = ({product, imagesLoaded, onImageLoaded}) =
           <Box position="relative">
             {product.inStock === 0 && (
               <Tag
-                backgroundColor="blackAlpha.800"
+                backgroundColor="white"
                 borderRadius="full"
                 className="fadeIn"
                 color="white"
