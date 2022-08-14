@@ -3,7 +3,7 @@ const nextConfig = {
   reactStrictMode: true,
   swcMinify: true,
   images: {
-    domains: ["https://res.cloudinary.com/chavedo/", "localhost", process.env.HOST_NAME],
+    domains: ["res.cloudinary.com", "localhost", "tesla-shop-nextjs.vercel.app"],
   },
 };
 
